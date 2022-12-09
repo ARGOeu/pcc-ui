@@ -7,8 +7,6 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 
-import { v4 as uuid } from 'uuid';
-
 
 const Table = (props) => {
   const data = props.data;
@@ -37,10 +35,10 @@ const Table = (props) => {
         <table className="table table-sm table-hover App-card1">
           <thead className="thead-light">
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={uuid()}>
-                {headerGroup.headers.map((header) => {
+              <tr key={headerGroup}>
+                {headerGroup.headers.map((header, i) => {
                   return (
-                    <th key={uuid()} colSpan={header.colSpan}>
+                    <th key={"header-th-"+i} colSpan={header.colSpan}>
                       {header.isPlaceholder ? null : (
                         <>
                           <div style={{ cursor: "pointer" }}
@@ -89,23 +87,23 @@ const Table = (props) => {
             let valuestd = row[1].getAllCells()[1];
             let extratds = [];
             return (
-              <tbody key={uuid()}>
-                <tr key={uuid()} className="border-bottom">
-                  <td key={uuid()} rowSpan={valuestd.getValue().length}>
+              <tbody key={"tbody-"+i}>
+                <tr key={"tbody-tr-"+i} className="border-bottom">
+                  <td key={"tbody-tr-td-rowspan"+i} rowSpan={valuestd.getValue().length}>
                     <div className="p-2">
                       <span className="d-block font-weight-bold">
                         <span>{handletd.getValue()}</span>
                       </span>
                     </div>
                   </td>
-                  <td key={uuid()}>
+                  <td key={"tbody-tr-td-key"+i}>
                     <div className="p-2">
                       <span className="d-block font-weight-bold">
                         <span>{valuestd.getValue()[0].type}</span>
                       </span>
                     </div>
                   </td>
-                  <td key={uuid()}>
+                  <td key={"tbody-tr-td-value"+i}>
                     <div className="p-2">
                       <span className="d-block font-weight-bold">
                         <span>{valuestd.getValue()[0].value}</span>
@@ -116,9 +114,9 @@ const Table = (props) => {
                 {
                   valuestd.getValue().slice(1).forEach((val, i) => {
                     extratds.push(
-                      <tr key={uuid()}>
-                        <td key={uuid()}>{val.type}</td>
-                        <td key={uuid()}>{val.value}</td>
+                      <tr key={"tbody-tr-"+i}>
+                        <td key={"tbody-tr-td-key"+i}>{val.type}</td>
+                        <td key={"tbody-tr-td-value"+i}>{val.value}</td>
                       </tr>
                     )
                   })
@@ -251,14 +249,6 @@ function DebouncedInput({
   React.useEffect(() => {
     setValue(initialValue);
   }, [initialValue]);
-
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value);
-    }, debounce);
-
-    return () => clearTimeout(timeout);
-  }, [value]);
 
   return (
     <input

@@ -286,8 +286,10 @@ const PrefixLookup = () => {
 
   useEffect(() => {
     let DM = new DataManager(config.endpoint);
-    DM.reverseLookUp(pageIndex, pageSize, { "filters": ref.current.values }).then((response) => { setHandles(flattenhandles(response)) });
-    DM.reverseLookUp(pageIndex + 1, pageSize, { "filters": ref.current.values }).then((response) => { setHandlesNextPage(flattenhandles(response)) });
+    if (ref.current !== null) {
+      DM.reverseLookUp(pageIndex, pageSize, { "filters": ref.current.values }).then((response) => { setHandles(flattenhandles(response)) });
+      DM.reverseLookUp(pageIndex + 1, pageSize, { "filters": ref.current.values }).then((response) => { setHandlesNextPage(flattenhandles(response)) });
+    }
   }, [pageIndex, pageSize]);
 
   const ref = useRef(null);
@@ -334,7 +336,8 @@ const PrefixLookup = () => {
   );
 
   const filtersDivCreate = () => {
-    filters && filters.forEach((f, i) => {
+    filtersDiv = [];
+    filters && filters.length > 0 && filters.forEach((f, i) => {
       if (f === "RETRIEVE_RECORDS") {
         filtersDiv.push(
           <div key={"filter-div-" + i} className="mb-3 row">
@@ -395,7 +398,7 @@ const PrefixLookup = () => {
 
   let cols = [];
   let rowspanenabled = false;
-  if (handles.length > 0 && handles[0].values.length > 0) {
+  if (handles && handles.length > 0 && handles[0].values.length > 0) {
     cols = columnsDetailed;
     rowspanenabled = true;
   }
@@ -406,7 +409,7 @@ const PrefixLookup = () => {
 
   return (
     <div className="container">
-      {filters &&
+      {filters && filters.length > 0 &&
         <>
           <Formik
             innerRef={ref}
@@ -414,8 +417,10 @@ const PrefixLookup = () => {
             initialValues={filtersFormikInitialize()}
             onSubmit={(data) => {
               let DM = new DataManager(config.endpoint);
-              DM.reverseLookUp(pageIndex, pageSize, { "filters": data }).then((response) => { setHandles(flattenhandles(response)) });
-              DM.reverseLookUp(pageIndex + 1, pageSize, { "filters": ref.current.values }).then((response) => { setHandlesNextPage(flattenhandles(response)) });
+              if (ref.current !== null) {
+                DM.reverseLookUp(pageIndex, pageSize, { "filters": data }).then((response) => { setHandles(flattenhandles(response)) });
+                DM.reverseLookUp(pageIndex + 1, pageSize, { "filters": ref.current.values }).then((response) => { setHandlesNextPage(flattenhandles(response)) });
+              }
             }}
           >
             <Form>
