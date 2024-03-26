@@ -11,10 +11,10 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 import { Providers, ProviderDetails } from "./components/Providers";
 import { Prefixes, PrefixDetails, PrefixAdd, PrefixUpdate, PrefixLookup, PrefixEditStats } from "./components/Prefixes/Prefixes";
-import Services from "./components/Services";
+import { Services, ServicesDetails } from "./components/Services";
+
 
 function App() {
-
   return (
     <BrowserRouter basename="/">
       <div className="App">
@@ -82,6 +82,11 @@ function App() {
                     exact
                     path="/services"
                     element={<Services />}
+                  />
+                  <Route
+                    exact
+                    path="/services/:name"
+                    element={<ServicesDetails />}
                   />
                 </Routes>
               </main>

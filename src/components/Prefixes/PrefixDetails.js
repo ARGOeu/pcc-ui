@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams, useNavigate, Navigate } from "react-router-dom";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import DataManager from "../../api/DataManager";
-
 import config from "../../config";
 
 
@@ -13,6 +10,12 @@ const PrefixDetails = (props) => {
     let navigate = useNavigate();
     const [prefixes, setPrefixes] = useState([]);
     const [prefixStatistics, setPrefixStatistics] = useState({});
+    const [numPidTotal, setNumPidTotal] = useState(0);
+    const [numPidResolv, setNumPidResolv] = useState(0);
+    const [numPidNonResolv,setNumPidNonResolv]  = useState(0);
+    const [numPidUnknown, setNumPidUnknown] = useState(0);
+    const [numPidPercResolv, setNumPidPercResolv] = useState(0);
+    const [numUsers, setNumUsers] = useState(1);
 
     let prefix = {};
     if (prefixes) {
@@ -25,7 +28,9 @@ const PrefixDetails = (props) => {
 
     useEffect(() => {
         let DM = new DataManager(config.endpoint);
-        DM.getPrefixes().then((response) => setPrefixes(response));
+        DM.getPrefixes()
+        .then((response) => setPrefixes(response))
+        .catch((error) => console.error("Error fetching prefixes:", error));
     }, []);
 
     useEffect(() => {
@@ -39,9 +44,9 @@ const PrefixDetails = (props) => {
             });
         }
         if (prefix.name !== undefined) {
-            DM.getStatisticsByPrefixID(prefix.name).then((response) => {
-                setPrefixStatistics(response);
-            });
+            DM.getStatisticsByPrefixID(prefix.name)
+            .then((response) => { setPrefixStatistics(response);})
+            .catch((error) => console.error("Error fetching statistics:", error));
         }
     }, [prefix]);
 
@@ -51,7 +56,9 @@ const PrefixDetails = (props) => {
 
     const handleDelete = (id) => {
         let DM = new DataManager(config.endpoint);
-        DM.deletePrefix(id).then(() => navigate("/prefixes"));
+        DM.deletePrefix(id)
+        .then(() => navigate("/prefixes"))
+        .catch((error) => console.error("Error deleting prefixes:", error));
     };
 
     let deleteCard = null;
@@ -92,27 +99,22 @@ const PrefixDetails = (props) => {
         deleteCard = null;
     }
 
-    // number of total pids
-    let numPidTotal = 0
-    // number of resolvable pids
-    let numPidResolv = 0
-    // number of non resolvable pids
-    let numPidNonResolv = 0
-    // number of unknown pids - data not yet given
-    let numPidUnknown = 0
-    // percentage of resolvable pids
-    let numPidPercResolv = 0
-    // number of users - data not yet given 
-    let numUsers = 1
-
     // if data available process the numbers
-    if (prefixStatistics) {
-        numPidTotal = parseInt(prefixStatistics.handles_count)
-        numPidResolv = parseInt(prefixStatistics.resolvable_count)
-        numPidNonResolv = parseInt(prefixStatistics.unresolvable_count)
-        numPidUnknown = parseInt(prefixStatistics.unchecked_count)
-        numPidPercResolv = (numPidResolv * 100) / numPidTotal
-    }
+    useEffect(() => {
+        if(prefixStatistics){
+            if (prefixStatistics.handles_count !== undefined) {
+                setNumPidTotal(parseInt(prefixStatistics.handles_count));
+                setNumPidResolv(parseInt(prefixStatistics.resolvable_count));
+                setNumPidNonResolv(parseInt(prefixStatistics.unresolvable_count));
+                setNumPidUnknown(parseInt(prefixStatistics.unchecked_count));
+                if (parseInt(prefixStatistics.handles_count) !== 0) {
+                    setNumPidPercResolv((parseInt(prefixStatistics.resolvable_count) * 100) / parseInt(prefixStatistics.handles_count));
+                } else {
+                    setNumPidPercResolv(0);
+                }
+            }
+        }
+    }, [prefixStatistics]);
 
     return (
         <div>

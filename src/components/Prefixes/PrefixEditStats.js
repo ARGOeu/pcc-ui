@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Alert from "../Alert";
-
 import DataManager from "../../api/DataManager";
-
 import config from "../../config";
 import { EditStats } from "./info"
 
@@ -44,15 +42,22 @@ const PrefixEditStats = () => {
             });
         }
         setPrefixName(prefix.name);
+
         if (prefix.name !== undefined) {
-            DM.getStatisticsByPrefixID(prefix.name).then((response) => {
-                setPrefixStatistics({
-                    ["handles_count"]: parseInt(response.handles_count || 0, 10),
-                    ["resolvable_count"]: parseInt(response.resolvable_count || 0, 10),
-                    ["unresolvable_count"]: parseInt(response.unresolvable_count || 0, 10),
-                    ["unchecked_count"]: parseInt(response.unchecked_count || 0, 10),
-                });
-            });
+            DM.getStatisticsByPrefixID(prefix.name)
+                .then((response) => {
+                    if (response && Object.keys(response).length > 0) {
+                        setPrefixStatistics({
+                            ["handles_count"]: parseInt(response.handles_count || 0, 10),
+                            ["resolvable_count"]: parseInt(response.resolvable_count || 0, 10),
+                            ["unresolvable_count"]: parseInt(response.unresolvable_count || 0, 10),
+                            ["unchecked_count"]: parseInt(response.unchecked_count || 0, 10),
+                        });
+                    } else {
+                        setPrefixStatistics({});
+                    }
+                })
+                .catch((error) => console.error("Error fetching statistics:", error));
         }
     }, [prefixes]);
 
@@ -99,28 +104,28 @@ const PrefixEditStats = () => {
                                         {EditStats.handles.info}
                                     </span>
                                 </span>
-                                <input type="number" id="handles_count" name="handles_count" className={`form-control`} value={!isNaN(prefixStatistics.handles_count) ? parseInt(prefixStatistics.handles_count, 10).toString() : ""} onChange={handleChange} />
+                                <input type="number" id="handles_count" name="handles_count" className={`form-control`} min="0" value={!isNaN(prefixStatistics.handles_count) ? parseInt(prefixStatistics.handles_count, 10).toString() : ""} onChange={handleChange} />
                                 <label htmlFor="resolvable" className="form-label fw-bold mt-2">{EditStats.resolvable.label}</label>
                                 <span className="info-icon"> i
                                     <span className="info-text">
                                         {EditStats.resolvable.info}
                                     </span>
                                 </span>
-                                <input type="number" id="resolvable_count" name="resolvable_count" className={`form-control`} value={!isNaN(prefixStatistics.resolvable_count) ? parseInt(prefixStatistics.resolvable_count, 10).toString() : ""} onChange={handleChange} />
+                                <input type="number" id="resolvable_count" name="resolvable_count" className={`form-control`} min="0" value={!isNaN(prefixStatistics.resolvable_count) ? parseInt(prefixStatistics.resolvable_count, 10).toString() : ""} onChange={handleChange} />
                                 <label htmlFor="non-resolvable" className="form-label fw-bold mt-2">{EditStats.nonResolvable.label}</label>
                                 <span className="info-icon"> i
                                     <span className="info-text">
                                         {EditStats.nonResolvable.info}
                                     </span>
                                 </span>
-                                <input type="number" id="unresolvable_count" name="unresolvable_count" className={`form-control`} value={!isNaN(prefixStatistics.unresolvable_count) ? parseInt(prefixStatistics.unresolvable_count, 10).toString() : ""} onChange={handleChange} />
+                                <input type="number" id="unresolvable_count" name="unresolvable_count" className={`form-control`} min="0" value={!isNaN(prefixStatistics.unresolvable_count) ? parseInt(prefixStatistics.unresolvable_count, 10).toString() : ""} onChange={handleChange} />
                                 <label htmlFor="unchecked" className="form-label fw-bold mt-2">{EditStats.unchecked.label}</label>
                                 <span className="info-icon"> i
                                     <span className="info-text">
                                         {EditStats.unchecked.info}
                                     </span>
                                 </span>
-                                <input type="number" id="unchecked_count" name="unchecked_count" className={`form-control`} value={!isNaN(prefixStatistics.unchecked_count) ? parseInt(prefixStatistics.unchecked_count, 10).toString() : ""} onChange={handleChange} />
+                                <input type="number" id="unchecked_count" name="unchecked_count" className={`form-control`} min="0" value={!isNaN(prefixStatistics.unchecked_count) ? parseInt(prefixStatistics.unchecked_count, 10).toString() : ""} onChange={handleChange} />
                             </div>
                         </div>
                     </div>

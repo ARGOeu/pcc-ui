@@ -55,7 +55,7 @@ const PrefixUpdate = () => {
         owner: response.owner,
         contact_name: response.contact_name,
         contact_email: response.contact_email,
-        contract_end: response.contract_end !== null ? moment(response.contract_end, dateFormat).toDate() : "",
+        contract_end: response.contract_end ? moment(response.contract_end, dateFormat).toDate() : null,
         contract_type: response.contract_type,
         used_by: response.used_by,
         status: response.status !== null ? response.status : "",
@@ -431,6 +431,7 @@ const PrefixUpdate = () => {
                   name='contract_end'
                   render={({ field }) => (
                     <DatePicker
+                      id='prefixContractEnd'
                       className={`form-control ${errors.contract_end ? "is-invalid" : ""}`}
                       placeholderText='Select date'
                       onChange={(date) => { field.onChange(date) }}

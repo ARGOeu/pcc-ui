@@ -32,7 +32,7 @@ var PrefixLabels = {
         info: "The branch of science, scientific discipline that is related to the use of Prefix. Here we use the classification of the Marketplace ."
     },
     contractEndDate: {
-        label: "Contact End Date",
+        label: "Contract End Date",
         info: "If the prefix is based on a signed contract then define the contract end date."
     },
     contractType: {

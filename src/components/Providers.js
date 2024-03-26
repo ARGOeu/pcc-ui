@@ -1,12 +1,9 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import '@fortawesome/fontawesome-free-solid'
-
 import DataManager from "../api/DataManager";
 import Table from "./Table";
-
 import config from "../config";
 
 const Providers = () => {

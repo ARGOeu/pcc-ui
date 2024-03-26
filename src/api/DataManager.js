@@ -47,17 +47,34 @@ class DataManager {
   }
 
   getPrefixes(id) {
-    let url;
     if (id) {
-      url = this.endpoint + "/prefixes/" + id;
+      return this.doGet(this.endpoint + "/prefixes/" + id, "prefixes");
     }
     else {
-      url = this.endpoint + "/prefixes";
+
+      let url = this.endpoint + "/prefixes";
+      let allPrefixes = []; // all prefixes
+
+      const fetchPage = async (page) => {
+        const response = await this.doGet(`${url}?page=${page}`);
+        const { content, links } = response;
+
+        allPrefixes = allPrefixes.concat(content);
+
+        const nextPageLink = links.find(link => link.rel === 'next');
+        if (nextPageLink) {
+          const nextPage = new URL(nextPageLink.href).searchParams.get('page');
+          await fetchPage(nextPage);
+        }
+      };
+
+      return fetchPage(1)
+        .then(() => allPrefixes)
+        .catch((error) => console.error("Error fetching prefixes:", error));
     }
-    return this.doGet(url, "prefixes");
   }
 
-  updateStatisticsByPrefixID(id, data) { 
+  updateStatisticsByPrefixID(id, data) {
     let url = this.endpoint + "/prefixes/" + id + "/statistics";
     return this.doSend("POST", url, data);
   }
