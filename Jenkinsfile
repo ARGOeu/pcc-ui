@@ -11,7 +11,7 @@ pipeline {
         stage ('Build and Deploy pcc-ui') {
             agent {
                 docker {
-                    image 'node:lts-buster'
+                    image 'node:22-bookworm'
                 }
             }
             steps {
@@ -19,7 +19,7 @@ pipeline {
                     sh '''
                         cd $WORKSPACE/$PROJECT_DIR
                         npm install
-                        CI=false npm run build
+                        CI=false npm run prettier && npm run lint && npm run build
                     '''
             }
         }
