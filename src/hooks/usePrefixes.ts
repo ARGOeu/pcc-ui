@@ -1,4 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { useAuth } from '@/auth/useAuth'
 import {
   createPrefix,
@@ -22,20 +28,37 @@ import type {
   PrefixesResponse,
 } from '@/types/prefixes'
 
-export const useGetPrefixes = (page = 1, size = 10, enabled = true) => {
+export const useGetAllPrefixes = (enabled = true) => {
   const { token } = useAuth()
 
-  return useQuery<PrefixesResponse, Error>({
-    queryKey: ['prefixes', page, size],
-    queryFn: () => {
+  const query = useInfiniteQuery<PrefixesResponse, Error>({
+    queryKey: ['prefixes', 'all'],
+    initialPageParam: 1,
+    queryFn: ({ pageParam }) => {
       if (!token) {
         throw new Error('No authentication token available')
       }
-      return fetchPrefixes(token, page, size)
+      return fetchPrefixes(token, pageParam as number, 100)
     },
+    getNextPageParam: (lastPage) =>
+      lastPage.number_of_page < lastPage.total_pages
+        ? lastPage.number_of_page + 1
+        : undefined,
     retry: false,
     enabled: enabled && !!token,
   })
+
+  const { hasNextPage, isFetchingNextPage, isError, fetchNextPage } = query
+
+  useEffect(() => {
+    if (hasNextPage && !isFetchingNextPage && !isError) {
+      void fetchNextPage()
+    }
+  }, [hasNextPage, isFetchingNextPage, isError, fetchNextPage])
+
+  const data = query.data?.pages.flatMap((page) => page.content) ?? []
+  const isLoading = query.isLoading || (hasNextPage && !isError)
+  return { ...query, data, isLoading }
 }
 
 export const useGetPrefix = (id: number, enabled = true) => {

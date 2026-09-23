@@ -45,7 +45,7 @@ const Layout = () => {
         onCloseMobileMenu={() => setIsMobileMenuOpen(false)}
       />
       <main className="flex-1 overflow-auto bg-white">
-        <div className="container px-4 py-2 md:px-6">
+        <div className="container md:mx-auto px-4 py-2 md:px-6">
           <Outlet />
         </div>
       </main>

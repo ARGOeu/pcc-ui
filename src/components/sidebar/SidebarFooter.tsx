@@ -7,14 +7,19 @@ interface SidebarFooterProps {
 }
 
 const SidebarFooter = ({ profile, onLogout }: SidebarFooterProps) => {
-  const displayName = profile?.username ?? profile?.email ?? 'User'
+  const displayName = profile?.name ?? profile?.email?.split('@')[0] ?? 'User'
 
   return (
     <div className="border-t border-line">
       <div className="flex items-center justify-between gap-1 px-4 py-4 text-sm text-body">
-        <span className="truncate font-medium" title={displayName}>
-          {displayName}
-        </span>
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gray-300 text-xs font-semibold">
+            {(displayName || 'U').charAt(0).toUpperCase()}
+          </div>
+          <span className="truncate font-medium" title={displayName}>
+            {displayName}
+          </span>
+        </div>
         <button
           type="button"
           onClick={onLogout}
