@@ -48,6 +48,9 @@ const PrefixesTable = ({ prefixes, emptyMessage }: PrefixesTableProps) => {
                 <IconButton
                   icon={<Bars3Icon className="size-4 md:size-5" />}
                   label="View prefix"
+                  onClick={() =>
+                    void navigate(`/prefixes/${prefix.id}/details`)
+                  }
                   className="text-muted hover:bg-surface-strong p-1!"
                 />
                 <IconButton
