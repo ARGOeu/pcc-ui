@@ -179,60 +179,59 @@ export const useDeletePrefixMutation = () => {
   })
 }
 
-export const useGetPrefixCount = (id: number, enabled = true) => {
+export const useGetPrefixCount = (name: string, enabled = true) => {
   const { token } = useAuth()
 
   return useQuery<number, Error>({
-    queryKey: ['prefix-count', id],
+    queryKey: ['prefix-count', name],
     queryFn: () => {
       if (!token) {
         throw new Error('No authentication token available')
       }
-      if (!id) {
-        throw new Error('Prefix ID is required')
+      if (!name) {
+        throw new Error('Prefix name is required')
       }
-      return fetchPrefixCount(id, token)
+      return fetchPrefixCount(name, token)
     },
     retry: false,
-    enabled: enabled && !!token && !!id,
+    enabled: enabled && !!token && !!name,
   })
 }
 
-export const useGetPrefixResolvableCount = (id: number, enabled = true) => {
+export const useGetPrefixResolvableCount = (name: string, enabled = true) => {
   const { token } = useAuth()
 
   return useQuery<number, Error>({
-    queryKey: ['prefix-resolvable-count', id],
+    queryKey: ['prefix-resolvable-count', name],
     queryFn: () => {
       if (!token) {
         throw new Error('No authentication token available')
       }
-      if (!id) {
-        throw new Error('Prefix ID is required')
+      if (!name) {
+        throw new Error('Prefix name is required')
       }
-      return fetchPrefixResolvableCount(id, token)
+      return fetchPrefixResolvableCount(name, token)
     },
     retry: false,
-    enabled: enabled && !!token && !!id,
+    enabled: enabled && !!token && !!name,
   })
 }
 
-export const useGetPrefixStatistics = (id: number, enabled = true) => {
+export const useGetPrefixStatistics = (name: string, enabled = true) => {
   const { token } = useAuth()
-
   return useQuery<PrefixStatistics, Error>({
-    queryKey: ['prefix-statistics', id],
+    queryKey: ['prefix-statistics', name],
     queryFn: () => {
       if (!token) {
         throw new Error('No authentication token available')
       }
-      if (!id) {
-        throw new Error('Prefix ID is required')
+      if (!name) {
+        throw new Error('Prefix name is required')
       }
-      return fetchPrefixStatistics(id, token)
+      return fetchPrefixStatistics(name, token)
     },
     retry: false,
-    enabled: enabled && !!token && !!id,
+    enabled: enabled && !!token && !!name,
   })
 }
 
@@ -243,26 +242,26 @@ export const useSetPrefixStatisticsMutation = () => {
   return useMutation<
     PrefixStatistics,
     Error,
-    { id: number; data: PrefixStatisticsRequest }
+    { name: string; data: PrefixStatisticsRequest }
   >({
     mutationFn: ({
-      id,
+      name,
       data,
     }: {
-      id: number
+      name: string
       data: PrefixStatisticsRequest
     }) => {
       if (!token) {
         throw new Error('No authentication token available')
       }
-      if (!id) {
-        throw new Error('Prefix ID is required')
+      if (!name) {
+        throw new Error('Prefix name is required')
       }
-      return setPrefixStatistics(id, data, token)
+      return setPrefixStatistics(name, data, token)
     },
-    onSuccess: (_, { id }) => {
+    onSuccess: (_, { name }) => {
       void queryClient.invalidateQueries({
-        queryKey: ['prefix-statistics', id],
+        queryKey: ['prefix-statistics', name],
       })
     },
     onError: (error) => {

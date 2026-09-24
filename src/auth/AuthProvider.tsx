@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { AuthContext } from './context'
 import { keycloak, initKeycloak } from './keycloak'
+import { onSessionExpired } from './authEvents'
 import { registerUser } from '@/api/profile'
 import type { ReactNode } from 'react'
 
@@ -17,6 +18,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const startedRef = useRef(false)
   const refreshTimerRef = useRef<number | null>(null)
   const hasRegistered = useRef(false)
+
+  // Resets auth state when App.tsx's global 401 handler fires.
+  useEffect(() => {
+    onSessionExpired(() => {
+      setAuthenticated(false)
+      setToken(undefined)
+    })
+  }, [])
 
   useEffect(() => {
     if (startedRef.current) return
