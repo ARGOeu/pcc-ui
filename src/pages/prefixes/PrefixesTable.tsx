@@ -6,6 +6,7 @@ import {
 } from '@heroicons/react/16/solid'
 import IconButton from '@/components/IconButton'
 import DataTable, { thBase, tdBase } from '@/components/DataTable'
+import capitalizeWord from '@/utils/capitalizeWord'
 import type { Prefix } from '@/types/prefixes'
 
 interface PrefixesTableProps {
@@ -49,8 +50,13 @@ const PrefixesTable = ({
             </td>
             <td className={tdBase}>{prefix.owner}</td>
             <td className={tdBase}>{prefix.service_name}</td>
-            <td className={tdBase}>{prefix.domain_name}</td>
-            <td className={tdBase}>{prefix.contract_type_name}</td>
+            <td className={tdBase}>
+              {prefix.domain_name && capitalizeWord(prefix.domain_name)}
+            </td>
+            <td className={tdBase}>
+              {prefix.contract_type_name &&
+                capitalizeWord(prefix.contract_type_name)}
+            </td>
             <td className={tdBase}>{prefix.contract_end?.split('T')[0]}</td>
             <td className={`${tdBase} whitespace-nowrap`}>
               <div className="flex items-center gap-2">
