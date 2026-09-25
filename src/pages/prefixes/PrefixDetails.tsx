@@ -5,6 +5,7 @@ import Button from '@/components/Button'
 import Card from '@/components/Card'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import ErrorDisplay from '@/components/ErrorDisplay'
+import capitalizeWord from '@/utils/capitalizeWord'
 import type { ReactNode } from 'react'
 
 interface DetailFieldProps {
@@ -113,7 +114,10 @@ const PrefixDetails = () => {
               <h2 className="section-title mt-6 mb-2">Contract</h2>
               <DetailField
                 label="Contract type"
-                value={prefix.contract_type_name}
+                value={
+                  prefix.contract_type_name &&
+                  capitalizeWord(prefix.contract_type_name)
+                }
               />
               <DetailField
                 label="Contract end"
@@ -124,12 +128,15 @@ const PrefixDetails = () => {
             <Card className="h-fit p-4 border-l-4 border-l-brand lg:sticky lg:top-4">
               <h2 className="section-title mb-2">Overview</h2>
               <DetailField label="Provider" value={prefix.provider_name} />
-              <DetailField label="Domain" value={prefix.domain_name} />
+              <DetailField
+                label="Domain"
+                value={prefix.domain_name && capitalizeWord(prefix.domain_name)}
+              />
               <DetailField label="Service" value={prefix.service_name} />
               {prefix.lookup_service_type_name && (
                 <DetailField
                   label="Lookup service type"
-                  value={prefix.lookup_service_type_name}
+                  value={capitalizeWord(prefix.lookup_service_type_name)}
                 />
               )}
               <DetailField

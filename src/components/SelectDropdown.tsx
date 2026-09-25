@@ -203,7 +203,9 @@ const SelectDropdown = ({
     }
   }
 
-  const selectedLabel = options.find((o) => o.value === value)?.label
+  const selectedLabel = value
+    ? options.find((o) => o.value === value)?.label
+    : undefined
 
   return (
     <div className={`relative ${className ?? ''}`} ref={containerRef}>
