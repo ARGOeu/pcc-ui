@@ -6,7 +6,6 @@ import {
   usePatchPrefixMutation,
 } from '@/hooks/usePrefixes'
 import { useGetProviders } from '@/hooks/useProviders'
-import { useGetServices } from '@/hooks/useServices'
 import { useGetDomains } from '@/hooks/useDomains'
 import {
   useGetContractTypes,
@@ -18,6 +17,7 @@ import Button from '@/components/Button'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import ErrorDisplay from '@/components/ErrorDisplay'
 import SelectDropdown from '@/components/SelectDropdown'
+import capitalizeWord from '@/utils/capitalizeWord'
 
 const sectionClass =
   'grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-2 lg:gap-8 mb-6 animate-fade-in'
@@ -34,7 +34,7 @@ interface FormData {
   contactEmail: string
   usedBy: string
   providerId: string
-  serviceId: string
+  serviceName: string
   domainId: string
   contractTypeId: string
   lookupServiceTypeId: string
@@ -48,8 +48,6 @@ interface FormErrors {
   contactName: string
   contactEmail: string
   providerId: string
-  contractTypeId: string
-  lookupServiceTypeId: string
 }
 
 const emptyErrors: FormErrors = {
@@ -58,8 +56,6 @@ const emptyErrors: FormErrors = {
   contactName: '',
   contactEmail: '',
   providerId: '',
-  contractTypeId: '',
-  lookupServiceTypeId: '',
 }
 
 const CreatePrefix = () => {
@@ -73,11 +69,6 @@ const CreatePrefix = () => {
     isLoading: isLoadingProviders,
     error: providersError,
   } = useGetProviders()
-  const {
-    data: services,
-    isLoading: isLoadingServices,
-    error: servicesError,
-  } = useGetServices()
   const {
     data: domains,
     isLoading: isLoadingDomains,
@@ -109,7 +100,7 @@ const CreatePrefix = () => {
     contactEmail: '',
     usedBy: '',
     providerId: '',
-    serviceId: '',
+    serviceName: '',
     domainId: '',
     contractTypeId: '',
     lookupServiceTypeId: '',
@@ -129,7 +120,7 @@ const CreatePrefix = () => {
         contactEmail: prefixData.contact_email,
         usedBy: prefixData.used_by ?? '',
         providerId: String(prefixData.provider_id),
-        serviceId: prefixData.service_id ? String(prefixData.service_id) : '',
+        serviceName: prefixData.service_name ?? '',
         domainId: prefixData.domain_id ? String(prefixData.domain_id) : '',
         contractTypeId: prefixData.contract_type_id
           ? String(prefixData.contract_type_id)
@@ -188,14 +179,6 @@ const CreatePrefix = () => {
       newErrors.providerId = 'Provider is required'
       hasError = true
     }
-    if (!formData.contractTypeId) {
-      newErrors.contractTypeId = 'Contract type is required'
-      hasError = true
-    }
-    if (!formData.lookupServiceTypeId) {
-      newErrors.lookupServiceTypeId = 'Lookup service type is required'
-      hasError = true
-    }
 
     if (hasError) {
       setErrors(newErrors)
@@ -210,8 +193,8 @@ const CreatePrefix = () => {
       provider_id: Number(formData.providerId),
       resolvable: formData.resolvable,
       ...(formData.usedBy.trim() && { used_by: formData.usedBy.trim() }),
-      ...(formData.serviceId && {
-        service_id: Number(formData.serviceId),
+      ...(formData.serviceName.trim() && {
+        service_name: formData.serviceName.trim(),
       }),
       ...(formData.domainId && { domain_id: Number(formData.domainId) }),
       ...(formData.contractTypeId && {
@@ -433,28 +416,12 @@ const CreatePrefix = () => {
 
               <div className="flex flex-col">
                 <label className={labelClass}>Service</label>
-                {isLoadingServices ? (
-                  <div className="flex items-center gap-2 text-sm text-muted py-2">
-                    <LoadingSpinner size="xs" />
-                    Loading services...
-                  </div>
-                ) : servicesError ? (
-                  <ErrorDisplay error={servicesError} context="services" />
-                ) : (
-                  <SelectDropdown
-                    value={formData.serviceId}
-                    onChange={(value) =>
-                      setFormData((prev) => ({ ...prev, serviceId: value }))
-                    }
-                    options={
-                      services?.map((service) => ({
-                        value: String(service.id),
-                        label: service.name,
-                      })) ?? []
-                    }
-                    placeholder="Select a service..."
-                  />
-                )}
+                <input
+                  type="text"
+                  value={formData.serviceName}
+                  onChange={(e) => handleTextChange(e, 'serviceName')}
+                  placeholder="Enter the service name"
+                />
               </div>
 
               <div className="flex flex-col">
@@ -472,12 +439,13 @@ const CreatePrefix = () => {
                     onChange={(value) =>
                       setFormData((prev) => ({ ...prev, domainId: value }))
                     }
-                    options={
-                      domains?.map((domain) => ({
+                    options={[
+                      { value: '', label: 'Not set' },
+                      ...(domains?.map((domain) => ({
                         value: String(domain.id),
-                        label: domain.name,
-                      })) ?? []
-                    }
+                        label: capitalizeWord(domain.name),
+                      })) ?? []),
+                    ]}
                     placeholder="Select a scientific domain..."
                     searchable
                   />
@@ -496,9 +464,7 @@ const CreatePrefix = () => {
             </div>
             <div className={sectionContentClass}>
               <div className="flex flex-col">
-                <label className={labelClass}>
-                  Contract type <span className="required">*</span>
-                </label>
+                <label className={labelClass}>Contract type</label>
                 {isLoadingContractTypes ? (
                   <div className="flex items-center gap-2 text-sm text-muted py-2">
                     <LoadingSpinner size="xs" />
@@ -513,28 +479,25 @@ const CreatePrefix = () => {
                   <SelectDropdown
                     value={formData.contractTypeId}
                     onChange={(value) =>
-                      handleDropdownChange('contractTypeId', value)
+                      setFormData((prev) => ({
+                        ...prev,
+                        contractTypeId: value,
+                      }))
                     }
-                    options={
-                      contractTypes?.map((contractType) => ({
+                    options={[
+                      { value: '', label: 'Not set' },
+                      ...(contractTypes?.map((contractType) => ({
                         value: String(contractType.id),
-                        label: contractType.name,
-                      })) ?? []
-                    }
+                        label: capitalizeWord(contractType.name),
+                      })) ?? []),
+                    ]}
                     placeholder="Select a contract type..."
                   />
-                )}
-                {errors.contractTypeId && (
-                  <span className="text-xs text-red-500 mt-1">
-                    {errors.contractTypeId}
-                  </span>
                 )}
               </div>
 
               <div className="flex flex-col">
-                <label className={labelClass}>
-                  Lookup service type <span className="required">*</span>
-                </label>
+                <label className={labelClass}>Lookup service type</label>
                 {isLoadingLookupTypes ? (
                   <div className="flex items-center gap-2 text-sm text-muted py-2">
                     <LoadingSpinner size="xs" />
@@ -549,21 +512,20 @@ const CreatePrefix = () => {
                   <SelectDropdown
                     value={formData.lookupServiceTypeId}
                     onChange={(value) =>
-                      handleDropdownChange('lookupServiceTypeId', value)
+                      setFormData((prev) => ({
+                        ...prev,
+                        lookupServiceTypeId: value,
+                      }))
                     }
-                    options={
-                      lookupServiceTypes?.map((lookupType) => ({
+                    options={[
+                      { value: '', label: 'Not set' },
+                      ...(lookupServiceTypes?.map((lookupType) => ({
                         value: String(lookupType.id),
-                        label: lookupType.name,
-                      })) ?? []
-                    }
+                        label: capitalizeWord(lookupType.name),
+                      })) ?? []),
+                    ]}
                     placeholder="Select a lookup service type..."
                   />
-                )}
-                {errors.lookupServiceTypeId && (
-                  <span className="text-xs text-red-500 mt-1">
-                    {errors.lookupServiceTypeId}
-                  </span>
                 )}
               </div>
 

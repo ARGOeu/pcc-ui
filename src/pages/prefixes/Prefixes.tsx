@@ -13,6 +13,7 @@ import SearchInput from '@/components/SearchInput'
 import SelectDropdown from '@/components/SelectDropdown'
 import Tabs from '@/components/Tabs'
 import PrefixesTable from './PrefixesTable'
+import capitalizeWord from '@/utils/capitalizeWord'
 
 const pageSize = 10
 
@@ -109,7 +110,7 @@ const Prefixes = () => {
     { value: '', label: 'All domains' },
     ...(domains?.map((domain) => ({
       value: String(domain.id),
-      label: domain.name,
+      label: capitalizeWord(domain.name),
     })) ?? []),
   ]
 
@@ -117,7 +118,7 @@ const Prefixes = () => {
     { value: '', label: 'All contract types' },
     ...(contractTypes?.map((contractType) => ({
       value: String(contractType.id),
-      label: contractType.name,
+      label: capitalizeWord(contractType.name),
     })) ?? []),
   ]
 
