@@ -1,5 +1,9 @@
 import { useNavigate } from 'react-router-dom'
-import { Bars3Icon, PencilSquareIcon } from '@heroicons/react/16/solid'
+import {
+  Bars3Icon,
+  PencilSquareIcon,
+  TrashIcon,
+} from '@heroicons/react/16/solid'
 import IconButton from '@/components/IconButton'
 import DataTable, { thBase, tdBase } from '@/components/DataTable'
 import type { Prefix } from '@/types/prefixes'
@@ -7,9 +11,14 @@ import type { Prefix } from '@/types/prefixes'
 interface PrefixesTableProps {
   prefixes: Prefix[]
   emptyMessage: string
+  onDelete: (prefix: Prefix) => void
 }
 
-const PrefixesTable = ({ prefixes, emptyMessage }: PrefixesTableProps) => {
+const PrefixesTable = ({
+  prefixes,
+  emptyMessage,
+  onDelete,
+}: PrefixesTableProps) => {
   const navigate = useNavigate()
 
   return (
@@ -58,6 +67,12 @@ const PrefixesTable = ({ prefixes, emptyMessage }: PrefixesTableProps) => {
                   label="Edit prefix"
                   onClick={() => void navigate(`/prefixes/${prefix.id}/edit`)}
                   className="text-muted hover:bg-surface-strong p-1!"
+                />
+                <IconButton
+                  icon={<TrashIcon className="size-4 md:size-5" />}
+                  label="Delete prefix"
+                  onClick={() => onDelete(prefix)}
+                  className="text-red-600 hover:bg-red-50 p-1!"
                 />
               </div>
             </td>

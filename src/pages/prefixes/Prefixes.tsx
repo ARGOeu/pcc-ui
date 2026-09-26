@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useGetAllPrefixes } from '@/hooks/usePrefixes'
+import { useGetAllPrefixes, useDeletePrefixMutation } from '@/hooks/usePrefixes'
 import { useGetProviders } from '@/hooks/useProviders'
 import { useGetDomains } from '@/hooks/useDomains'
 import { useGetContractTypes } from '@/hooks/useCodelist'
+import { toast } from 'sonner'
 import PageHeader from '@/components/PageHeader'
 import Button from '@/components/Button'
 import LoadingSpinner from '@/components/LoadingSpinner'
@@ -12,7 +13,9 @@ import Pagination from '@/components/Pagination'
 import SearchInput from '@/components/SearchInput'
 import SelectDropdown from '@/components/SelectDropdown'
 import Tabs from '@/components/Tabs'
+import ConfirmDialog from '@/components/ConfirmDialog'
 import PrefixesTable from './PrefixesTable'
+import type { Prefix } from '@/types/prefixes'
 
 const pageSize = 10
 
@@ -25,11 +28,14 @@ const Prefixes = () => {
   const [searchInput, setSearchInput] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [prefixToDelete, setPrefixToDelete] = useState<Prefix | null>(null)
 
   const { data, isLoading, error } = useGetAllPrefixes()
   const { data: providers } = useGetProviders()
   const { data: domains } = useGetDomains()
   const { data: contractTypes } = useGetContractTypes()
+  const deleteMutation = useDeletePrefixMutation()
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -58,6 +64,38 @@ const Prefixes = () => {
     setSearchInput('')
     setSearchQuery('')
     setCurrentPage(1)
+  }
+
+  const handleDelete = (prefix: Prefix) => {
+    setPrefixToDelete(prefix)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false)
+    setPrefixToDelete(null)
+  }
+
+  const handleDeleteConfirm = () => {
+    if (!prefixToDelete) {
+      return
+    }
+    deleteMutation.mutate(
+      { id: prefixToDelete.id },
+      {
+        onSuccess: () => {
+          toast.success('Prefix deleted successfully!')
+          setDeleteDialogOpen(false)
+          setPrefixToDelete(null)
+          if (paginated.length === 1 && currentPage > 1) {
+            setCurrentPage((prev) => prev - 1)
+          }
+        },
+        onError: (error) => {
+          toast.error(`Failed to delete prefix: ${error.message}`)
+        },
+      },
+    )
   }
 
   const filtered = data.filter((prefix) => {
@@ -123,6 +161,25 @@ const Prefixes = () => {
 
   return (
     <div className="page-container">
+      <ConfirmDialog
+        isOpen={deleteDialogOpen}
+        title="Delete prefix"
+        message={
+          <>
+            Are you sure you want to delete the prefix{' '}
+            <strong>{prefixToDelete?.name}</strong>?
+            <br />
+            <span className="text-amber-600 font-medium">
+              This action cannot be undone.
+            </span>
+          </>
+        }
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        isPending={deleteMutation.isPending}
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+      />
       <PageHeader
         title="Prefixes"
         subtitle="Browse the prefixes registered in the catalogue"
@@ -175,7 +232,11 @@ const Prefixes = () => {
               />
             </div>
           </div>
-          <PrefixesTable prefixes={paginated} emptyMessage={emptyMessage} />
+          <PrefixesTable
+            prefixes={paginated}
+            emptyMessage={emptyMessage}
+            onDelete={handleDelete}
+          />
           {totalPages > 0 && (
             <Pagination
               currentPage={currentPage}
