@@ -17,6 +17,7 @@ export interface SelectOption {
   value: string
   label: string
   disabled?: boolean
+  isPlaceholder?: boolean
 }
 
 interface SelectDropdownProps {
@@ -203,7 +204,7 @@ const SelectDropdown = ({
     }
   }
 
-  const selectedLabel = options.find((o) => o.value === value)?.label
+  const selectedOption = options.find((o) => o.value === value)
 
   return (
     <div className={`relative ${className ?? ''}`} ref={containerRef}>
@@ -217,12 +218,12 @@ const SelectDropdown = ({
         aria-activedescendant={
           activeIndex >= 0 ? `${listboxId}-option-${activeIndex}` : undefined
         }
-        value={selectedLabel ?? ''}
+        value={selectedOption?.label ?? ''}
         placeholder={placeholder}
         disabled={disabled}
         onClick={handleToggle}
         onKeyDown={(e) => handleKeyDown(e, true)}
-        className="w-full cursor-pointer pr-9 py-1.5"
+        className={`w-full cursor-pointer pr-9 py-1.5 ${selectedOption?.isPlaceholder ? 'text-subtle' : ''}`}
       />
       <ChevronUpDownIcon className="absolute right-2.5 top-1/2 -translate-y-1/2 size-4 text-muted shrink-0 pointer-events-none" />
 

@@ -14,17 +14,32 @@ export const fetchPrefixes = async (
   token: string,
   page = 1,
   size = 10,
+  domain?: string,
+  provider?: string,
+  contractType?: string,
+  search?: string,
 ): Promise<PrefixesResponse> => {
-  const response = await fetch(
-    `${BACKEND_API}/api/v1/prefixes?page=${page}&size=${size}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+  let url = `${BACKEND_API}/api/v1/prefixes?page=${page}&size=${size}`
+  if (domain) {
+    url += `&domain=${encodeURIComponent(domain)}`
+  }
+  if (provider) {
+    url += `&provider=${encodeURIComponent(provider)}`
+  }
+  if (contractType) {
+    url += `&contract_type=${encodeURIComponent(contractType)}`
+  }
+  if (search) {
+    url += `&search=${encodeURIComponent(search)}`
+  }
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
-  )
+  })
 
   if (!response.ok) {
     const errorData = (await response.json().catch(() => ({}))) as {

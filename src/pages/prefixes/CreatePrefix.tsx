@@ -440,7 +440,7 @@ const CreatePrefix = () => {
                       setFormData((prev) => ({ ...prev, domainId: value }))
                     }
                     options={[
-                      { value: '', label: 'Not set' },
+                      { value: '', label: 'Not set', isPlaceholder: true },
                       ...(domains?.map((domain) => ({
                         value: String(domain.id),
                         label: capitalizeWord(domain.name),
@@ -485,7 +485,7 @@ const CreatePrefix = () => {
                       }))
                     }
                     options={[
-                      { value: '', label: 'Not set' },
+                      { value: '', label: 'Not set', isPlaceholder: true },
                       ...(contractTypes?.map((contractType) => ({
                         value: String(contractType.id),
                         label: capitalizeWord(contractType.name),
@@ -518,7 +518,7 @@ const CreatePrefix = () => {
                       }))
                     }
                     options={[
-                      { value: '', label: 'Not set' },
+                      { value: '', label: 'Not set', isPlaceholder: true },
                       ...(lookupServiceTypes?.map((lookupType) => ({
                         value: String(lookupType.id),
                         label: capitalizeWord(lookupType.name),
