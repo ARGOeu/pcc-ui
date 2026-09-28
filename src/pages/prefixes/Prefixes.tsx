@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useGetAllPrefixes, useDeletePrefixMutation } from '@/hooks/usePrefixes'
+import { useGetPrefixes, useDeletePrefixMutation } from '@/hooks/usePrefixes'
 import { useGetProviders } from '@/hooks/useProviders'
 import { useGetDomains } from '@/hooks/useDomains'
 import { useGetContractTypes } from '@/hooks/useCodelist'
@@ -23,7 +23,7 @@ const pageSize = 10
 const Prefixes = () => {
   const navigate = useNavigate()
 
-  const [activeProviderId, setActiveProviderId] = useState('')
+  const [activeProvider, setActiveProvider] = useState('')
   const [domainFilter, setDomainFilter] = useState('')
   const [contractTypeFilter, setContractTypeFilter] = useState('')
   const [searchInput, setSearchInput] = useState('')
@@ -32,7 +32,14 @@ const Prefixes = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [prefixToDelete, setPrefixToDelete] = useState<Prefix | null>(null)
 
-  const { data, isLoading, error } = useGetAllPrefixes()
+  const { data, isLoading, error } = useGetPrefixes(
+    currentPage,
+    pageSize,
+    domainFilter || undefined,
+    activeProvider || undefined,
+    contractTypeFilter || undefined,
+    searchQuery || undefined,
+  )
   const { data: providers } = useGetProviders()
   const { data: domains } = useGetDomains()
   const { data: contractTypes } = useGetContractTypes()
@@ -46,8 +53,8 @@ const Prefixes = () => {
     return () => clearTimeout(timer)
   }, [searchInput])
 
-  const handleProviderTabChange = (id: string) => {
-    setActiveProviderId(id)
+  const handleProviderTabChange = (name: string) => {
+    setActiveProvider(name)
     setCurrentPage(1)
   }
 
@@ -88,7 +95,7 @@ const Prefixes = () => {
           toast.success('Prefix deleted successfully!')
           setDeleteDialogOpen(false)
           setPrefixToDelete(null)
-          if (paginated.length === 1 && currentPage > 1) {
+          if (prefixes.length === 1 && currentPage > 1) {
             setCurrentPage((prev) => prev - 1)
           }
         },
@@ -99,47 +106,20 @@ const Prefixes = () => {
     )
   }
 
-  const filtered = data.filter((prefix) => {
-    if (activeProviderId && String(prefix.provider_id) !== activeProviderId) {
-      return false
-    }
-    if (domainFilter && String(prefix.domain_id) !== domainFilter) {
-      return false
-    }
-    if (
-      contractTypeFilter &&
-      String(prefix.contract_type_id) !== contractTypeFilter
-    ) {
-      return false
-    }
-    if (!searchQuery) {
-      return true
-    }
-    const query = searchQuery.toLowerCase()
-    return (
-      prefix.name.toLowerCase().includes(query) ||
-      prefix.owner.toLowerCase().includes(query) ||
-      (prefix.provider_name ?? '').toLowerCase().includes(query) ||
-      (prefix.service_name ?? '').toLowerCase().includes(query) ||
-      (prefix.domain_name ?? '').toLowerCase().includes(query) ||
-      (prefix.contract_type_name ?? '').toLowerCase().includes(query)
-    )
-  })
-
-  const totalPages = Math.ceil(filtered.length / pageSize)
-  const paginated = filtered.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize,
+  const prefixes = data?.content ?? []
+  const totalPages = data?.total_pages ?? 0
+  const totalElements = data?.total_elements ?? 0
+  const hasActiveFilters = Boolean(
+    activeProvider || domainFilter || contractTypeFilter || searchQuery,
   )
-  const emptyMessage =
-    data.length > 0 && filtered.length === 0
-      ? 'No prefixes match your filters'
-      : 'No prefixes found'
+  const emptyMessage = hasActiveFilters
+    ? 'No prefixes match your filters'
+    : 'No prefixes found'
 
   const providerTabs = [
     { id: '', label: 'All' },
     ...(providers?.map((provider) => ({
-      id: String(provider.id),
+      id: provider.name,
       label: provider.name,
     })) ?? []),
   ]
@@ -147,7 +127,7 @@ const Prefixes = () => {
   const domainOptions = [
     { value: '', label: 'All domains' },
     ...(domains?.map((domain) => ({
-      value: String(domain.id),
+      value: domain.name,
       label: capitalizeWord(domain.name),
     })) ?? []),
   ]
@@ -155,7 +135,7 @@ const Prefixes = () => {
   const contractTypeOptions = [
     { value: '', label: 'All contract types' },
     ...(contractTypes?.map((contractType) => ({
-      value: String(contractType.id),
+      value: contractType.name,
       label: capitalizeWord(contractType.name),
     })) ?? []),
   ]
@@ -203,7 +183,7 @@ const Prefixes = () => {
         <>
           <Tabs
             tabs={providerTabs}
-            activeTab={activeProviderId}
+            activeTab={activeProvider}
             onChange={handleProviderTabChange}
             className="mb-3"
           />
@@ -212,7 +192,7 @@ const Prefixes = () => {
               value={searchInput}
               onChange={setSearchInput}
               onClear={handleSearchClear}
-              placeholder="Search by name, owner, provider..."
+              placeholder="Search by name or owner..."
               className="mb-0! flex-1 max-w-xs"
             />
             <div className="flex items-center gap-2">
@@ -234,15 +214,15 @@ const Prefixes = () => {
             </div>
           </div>
           <PrefixesTable
-            prefixes={paginated}
+            prefixes={prefixes}
             emptyMessage={emptyMessage}
             onDelete={handleDelete}
           />
-          {totalPages > 0 && (
+          {totalElements > 0 && (
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
-              totalElements={filtered.length}
+              totalElements={totalElements}
               itemLabel="prefixes"
               onPrev={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
               onNext={() => setCurrentPage((prev) => prev + 1)}

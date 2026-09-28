@@ -41,6 +41,7 @@ export const SortableColumnHeader = ({
 
 interface DataTableProps {
   children: ReactNode
+  header?: ReactNode
   isEmpty?: boolean
   emptyMessage?: string
   emptyColSpan?: number
@@ -51,6 +52,7 @@ interface DataTableProps {
 
 const DataTable = ({
   children,
+  header,
   isEmpty,
   emptyMessage = 'No items found',
   emptyColSpan = 1,
@@ -64,6 +66,7 @@ const DataTable = ({
     {scrollable ? (
       <div className="overflow-auto flex-1">
         <TableInner
+          header={header}
           isEmpty={isEmpty}
           emptyMessage={emptyMessage}
           emptyColSpan={emptyColSpan}
@@ -75,6 +78,7 @@ const DataTable = ({
     ) : (
       <div className="overflow-x-auto">
         <TableInner
+          header={header}
           isEmpty={isEmpty}
           emptyMessage={emptyMessage}
           emptyColSpan={emptyColSpan}
@@ -89,6 +93,7 @@ const DataTable = ({
 
 interface TableInnerProps {
   children: ReactNode
+  header?: ReactNode
   isEmpty?: boolean
   emptyMessage: string
   emptyColSpan: number
@@ -97,6 +102,7 @@ interface TableInnerProps {
 
 const TableInner = ({
   children,
+  header,
   isEmpty,
   emptyMessage,
   emptyColSpan,
@@ -106,6 +112,7 @@ const TableInner = ({
   if (isEmpty) {
     return (
       <table className={tableClass}>
+        {header}
         <tbody>
           <tr>
             <td
@@ -119,7 +126,12 @@ const TableInner = ({
       </table>
     )
   }
-  return <table className={tableClass}>{children}</table>
+  return (
+    <table className={tableClass}>
+      {header}
+      {children}
+    </table>
+  )
 }
 
 export default DataTable

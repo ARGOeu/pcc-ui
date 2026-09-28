@@ -27,18 +27,20 @@ const PrefixesTable = ({
       isEmpty={!prefixes.length}
       emptyMessage={emptyMessage}
       emptyColSpan={7}
+      header={
+        <thead className="bg-gray-100">
+          <tr>
+            <th className={thBase}>Name</th>
+            <th className={thBase}>Owner</th>
+            <th className={thBase}>Service</th>
+            <th className={thBase}>Domain</th>
+            <th className={thBase}>Contract type</th>
+            <th className={thBase}>Contract end</th>
+            <th className={`${thBase} w-40`}>Actions</th>
+          </tr>
+        </thead>
+      }
     >
-      <thead className="bg-gray-100">
-        <tr>
-          <th className={thBase}>Name</th>
-          <th className={thBase}>Owner</th>
-          <th className={thBase}>Service</th>
-          <th className={thBase}>Domain</th>
-          <th className={thBase}>Contract type</th>
-          <th className={thBase}>Contract end</th>
-          <th className={`${thBase} w-40`}>Actions</th>
-        </tr>
-      </thead>
       <tbody className="divide-y divide-gray-100">
         {prefixes.map((prefix) => (
           <tr key={prefix.id} className="hover:bg-surface-muted">
