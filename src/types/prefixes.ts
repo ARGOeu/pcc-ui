@@ -9,7 +9,6 @@ export interface Prefix {
   used_by?: string
   contract_end?: string
   status?: number
-  service_id?: number
   domain_id?: number
   provider_id: number
   resolvable?: boolean
@@ -30,7 +29,7 @@ export interface PrefixRequest {
   used_by?: string
   contract_end?: string
   status?: number
-  service_id?: number
+  service_name?: string
   domain_id?: number
   provider_id: number
   resolvable?: boolean
@@ -46,7 +45,7 @@ export interface PrefixPartialRequest {
   used_by?: string
   contract_end?: string
   status?: string
-  service_id?: number
+  service_name?: string
   domain_id?: number
   provider_id?: number
   resolvable?: boolean
