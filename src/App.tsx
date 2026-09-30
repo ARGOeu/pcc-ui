@@ -12,6 +12,7 @@ import NotFound from '@/pages/NotFound'
 import Prefixes from '@/pages/prefixes/Prefixes'
 import CreatePrefix from '@/pages/prefixes/CreatePrefix'
 import PrefixDetails from '@/pages/prefixes/PrefixDetails'
+import EndpointsAccess from '@/pages/endpoints-access'
 import { AuthProvider } from '@/auth/AuthProvider'
 import { notifySessionExpired } from '@/auth/authEvents'
 
@@ -57,6 +58,7 @@ const App = () => {
               <Route path="prefixes/add" element={<CreatePrefix />} />
               <Route path="prefixes/:id/details" element={<PrefixDetails />} />
               <Route path="prefixes/:id/edit" element={<CreatePrefix />} />
+              <Route path="endpoints-access" element={<EndpointsAccess />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
