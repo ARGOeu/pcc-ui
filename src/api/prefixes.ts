@@ -1,6 +1,5 @@
 import type {
   Prefix,
-  PrefixDeleteResponse,
   PrefixPartialRequest,
   PrefixRequest,
   PrefixStatistics,
@@ -184,7 +183,7 @@ export const deletePrefix = async (
   providerId: number,
   id: number,
   token: string,
-): Promise<PrefixDeleteResponse> => {
+): Promise<void> => {
   const response = await fetch(
     `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${id}`,
     {
@@ -204,8 +203,6 @@ export const deletePrefix = async (
       errorData.message ?? `HTTP error! status: ${response.status}`,
     )
   }
-
-  return (await response.json()) as PrefixDeleteResponse
 }
 
 export const fetchPrefixCount = async (

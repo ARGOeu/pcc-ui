@@ -1,7 +1,3 @@
-export interface PrefixDeleteResponse {
-  message: string
-}
-
 export interface Prefix {
   id: number
   name: string

@@ -49,6 +49,14 @@ const Sidebar = ({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) => {
               onClick={onCloseMobileMenu}
             />
           </div>
+          <div>
+            <SidebarSectionLabel>Admin</SidebarSectionLabel>
+            <SidebarNavItem
+              to="/endpoints-access"
+              label="Endpoints access"
+              onClick={onCloseMobileMenu}
+            />
+          </div>
         </nav>
       ) : (
         <div className="flex-1 flex items-start justify-center px-6 pt-20">

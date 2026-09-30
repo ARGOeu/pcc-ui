@@ -12,6 +12,7 @@ import NotFound from '@/pages/NotFound'
 import Prefixes from '@/pages/prefixes/Prefixes'
 import CreatePrefix from '@/pages/prefixes/CreatePrefix'
 import PrefixDetails from '@/pages/prefixes/PrefixDetails'
+import EndpointsAccess from '@/pages/endpoints-access'
 import InviteUser from '@/pages/prefixes/InviteUser'
 import MyInvitations from '@/pages/MyInvitations'
 import InvitationReview from '@/pages/InvitationReview'
@@ -75,6 +76,7 @@ const App = () => {
                 element={<InviteUser />}
               />
               <Route path="my-invitations" element={<MyInvitations />} />
+              <Route path="endpoints-access" element={<EndpointsAccess />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

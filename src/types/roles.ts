@@ -1,7 +1,4 @@
-export interface RoleAttributes {
-  preferred_name?: string[]
-  description?: string[]
-}
+export type RoleAttributes = Record<string, string[] | undefined>
 
 export interface Role {
   id: string
