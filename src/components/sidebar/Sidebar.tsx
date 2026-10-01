@@ -2,6 +2,7 @@ import { TagIcon } from '@heroicons/react/16/solid'
 import { useGetUserProfile } from '@/hooks/useProfile'
 import { useAuth } from '@/auth/useAuth'
 import SidebarNavItem from '@/components/sidebar/SidebarNavItem'
+import SidebarSectionLabel from '@/components/sidebar/SidebarSectionLabel'
 import SidebarHeader from '@/components/sidebar/SidebarHeader'
 import SidebarFooter from '@/components/sidebar/SidebarFooter'
 
@@ -31,6 +32,14 @@ const Sidebar = ({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) => {
             label="Prefixes"
             onClick={onCloseMobileMenu}
           />
+          <div>
+            <SidebarSectionLabel>Admin</SidebarSectionLabel>
+            <SidebarNavItem
+              to="/endpoints-access"
+              label="Endpoints access"
+              onClick={onCloseMobileMenu}
+            />
+          </div>
         </nav>
       ) : (
         <div className="flex-1 flex items-start justify-center px-6 pt-20">

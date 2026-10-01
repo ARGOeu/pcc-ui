@@ -19,7 +19,6 @@ import {
 } from '@/api/prefixes'
 import type {
   Prefix,
-  PrefixDeleteResponse,
   PrefixPartialRequest,
   PrefixRequest,
   PrefixStatistics,
@@ -159,7 +158,7 @@ export const useDeletePrefixMutation = () => {
   const queryClient = useQueryClient()
   const { token } = useAuth()
 
-  return useMutation<PrefixDeleteResponse, Error, { id: number }>({
+  return useMutation<void, Error, { id: number }>({
     mutationFn: ({ id }: { id: number }) => {
       if (!token) {
         throw new Error('No authentication token available')
