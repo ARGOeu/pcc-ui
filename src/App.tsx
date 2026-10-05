@@ -54,9 +54,18 @@ const App = () => {
             <Route element={<Layout />}>
               <Route index element={<Home />} />
               <Route path="prefixes" element={<Prefixes />} />
-              <Route path="prefixes/add" element={<CreatePrefix />} />
-              <Route path="prefixes/:id/details" element={<PrefixDetails />} />
-              <Route path="prefixes/:id/edit" element={<CreatePrefix />} />
+              <Route
+                path="providers/:providerId/prefixes/add"
+                element={<CreatePrefix />}
+              />
+              <Route
+                path="providers/:providerId/prefixes/:id/details"
+                element={<PrefixDetails />}
+              />
+              <Route
+                path="providers/:providerId/prefixes/:id/edit"
+                element={<CreatePrefix />}
+              />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

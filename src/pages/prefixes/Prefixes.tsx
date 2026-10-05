@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useGetPrefixes, useDeletePrefixMutation } from '@/hooks/usePrefixes'
 import { useGetProviders } from '@/hooks/useProviders'
 import { useGetDomains } from '@/hooks/useDomains'
@@ -22,8 +22,8 @@ const pageSize = 10
 
 const Prefixes = () => {
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
 
-  const [activeProvider, setActiveProvider] = useState('')
   const [domainFilter, setDomainFilter] = useState('')
   const [contractTypeFilter, setContractTypeFilter] = useState('')
   const [searchInput, setSearchInput] = useState('')
@@ -32,15 +32,25 @@ const Prefixes = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [prefixToDelete, setPrefixToDelete] = useState<Prefix | null>(null)
 
+  const {
+    data: providers,
+    isLoading: isLoadingProviders,
+    error: providersError,
+  } = useGetProviders()
+  const providerParam = Number(searchParams.get('provider'))
+  const activeProvider =
+    providers?.find((provider) => provider.id === providerParam) ??
+    providers?.[0]
   const { data, isLoading, error } = useGetPrefixes(
+    activeProvider?.id ?? 0,
     currentPage,
     pageSize,
     domainFilter || undefined,
-    activeProvider || undefined,
+    activeProvider?.name,
     contractTypeFilter || undefined,
     searchQuery || undefined,
+    !!activeProvider,
   )
-  const { data: providers } = useGetProviders()
   const { data: domains } = useGetDomains()
   const { data: contractTypes } = useGetContractTypes()
   const deleteMutation = useDeletePrefixMutation()
@@ -53,8 +63,8 @@ const Prefixes = () => {
     return () => clearTimeout(timer)
   }, [searchInput])
 
-  const handleProviderTabChange = (name: string) => {
-    setActiveProvider(name)
+  const handleProviderTabChange = (providerId: string) => {
+    setSearchParams({ provider: providerId }, { replace: true })
     setCurrentPage(1)
   }
 
@@ -89,7 +99,7 @@ const Prefixes = () => {
       return
     }
     deleteMutation.mutate(
-      { id: prefixToDelete.id },
+      { providerId: prefixToDelete.provider_id, id: prefixToDelete.id },
       {
         onSuccess: () => {
           toast.success('Prefix deleted successfully!')
@@ -110,19 +120,17 @@ const Prefixes = () => {
   const totalPages = data?.total_pages ?? 0
   const totalElements = data?.total_elements ?? 0
   const hasActiveFilters = Boolean(
-    activeProvider || domainFilter || contractTypeFilter || searchQuery,
+    domainFilter || contractTypeFilter || searchQuery,
   )
   const emptyMessage = hasActiveFilters
     ? 'No prefixes match your filters'
     : 'No prefixes found'
 
-  const providerTabs = [
-    { id: '', label: 'All' },
-    ...(providers?.map((provider) => ({
-      id: provider.name,
+  const providerTabs =
+    providers?.map((provider) => ({
+      id: String(provider.id),
       label: provider.name,
-    })) ?? []),
-  ]
+    })) ?? []
 
   const domainOptions = [
     { value: '', label: 'All domains' },
@@ -168,22 +176,25 @@ const Prefixes = () => {
       >
         <Button
           variant="primary"
-          onClick={() => void navigate('/prefixes/add')}
+          disabled={!activeProvider}
+          onClick={() =>
+            void navigate(`/providers/${activeProvider?.id}/prefixes/add`)
+          }
         >
           Create prefix
         </Button>
       </PageHeader>
-      {isLoading ? (
+      {isLoadingProviders ? (
         <div className="loading-container">
           <LoadingSpinner size="md" />
         </div>
-      ) : error ? (
-        <ErrorDisplay error={error} context="prefixes" />
+      ) : providersError ? (
+        <ErrorDisplay error={providersError} context="providers" />
       ) : (
         <>
           <Tabs
             tabs={providerTabs}
-            activeTab={activeProvider}
+            activeTab={String(activeProvider?.id ?? '')}
             onChange={handleProviderTabChange}
             className="mb-3"
           />
@@ -213,20 +224,30 @@ const Prefixes = () => {
               />
             </div>
           </div>
-          <PrefixesTable
-            prefixes={prefixes}
-            emptyMessage={emptyMessage}
-            onDelete={handleDelete}
-          />
-          {totalElements > 0 && (
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              totalElements={totalElements}
-              itemLabel="prefixes"
-              onPrev={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-              onNext={() => setCurrentPage((prev) => prev + 1)}
-            />
+          {isLoading ? (
+            <div className="loading-container">
+              <LoadingSpinner size="md" />
+            </div>
+          ) : error ? (
+            <ErrorDisplay error={error} context="prefixes" />
+          ) : (
+            <>
+              <PrefixesTable
+                prefixes={prefixes}
+                emptyMessage={emptyMessage}
+                onDelete={handleDelete}
+              />
+              {totalElements > 0 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  totalElements={totalElements}
+                  itemLabel="prefixes"
+                  onPrev={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                  onNext={() => setCurrentPage((prev) => prev + 1)}
+                />
+              )}
+            </>
           )}
         </>
       )}

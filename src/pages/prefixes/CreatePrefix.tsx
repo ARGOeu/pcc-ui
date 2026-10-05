@@ -60,7 +60,11 @@ const emptyErrors: FormErrors = {
 
 const CreatePrefix = () => {
   const navigate = useNavigate()
-  const { id: prefixIdParam } = useParams<{ id?: string }>()
+  const { providerId: providerIdParam, id: prefixIdParam } = useParams<{
+    providerId: string
+    id?: string
+  }>()
+  const routeProviderId = Number(providerIdParam)
   const isEditMode = Boolean(prefixIdParam)
   const prefixId = prefixIdParam ? Number(prefixIdParam) : undefined
 
@@ -88,7 +92,7 @@ const CreatePrefix = () => {
     data: prefixData,
     isLoading: isPrefixLoading,
     error: prefixError,
-  } = useGetPrefix(prefixId ?? 0, isEditMode)
+  } = useGetPrefix(routeProviderId, prefixId ?? 0, isEditMode)
 
   const createMutation = useCreatePrefixMutation()
   const patchMutation = usePatchPrefixMutation()
@@ -99,7 +103,7 @@ const CreatePrefix = () => {
     contactName: '',
     contactEmail: '',
     usedBy: '',
-    providerId: '',
+    providerId: String(routeProviderId),
     serviceName: '',
     domainId: '',
     contractTypeId: '',
@@ -208,11 +212,11 @@ const CreatePrefix = () => {
 
     if (isEditMode && prefixId) {
       patchMutation.mutate(
-        { id: prefixId, data: payload },
+        { providerId: routeProviderId, id: prefixId, data: payload },
         {
           onSuccess: () => {
             toast.success('Prefix updated successfully!')
-            void navigate('/prefixes')
+            void navigate(`/prefixes?provider=${payload.provider_id}`)
           },
           onError: (error) => {
             toast.error(`Failed to update prefix: ${error.message}`)
@@ -220,15 +224,18 @@ const CreatePrefix = () => {
         },
       )
     } else {
-      createMutation.mutate(payload, {
-        onSuccess: () => {
-          toast.success('Prefix created successfully!')
-          void navigate('/prefixes')
+      createMutation.mutate(
+        { providerId: payload.provider_id, data: payload },
+        {
+          onSuccess: () => {
+            toast.success('Prefix created successfully!')
+            void navigate(`/prefixes?provider=${payload.provider_id}`)
+          },
+          onError: (error) => {
+            toast.error(`Failed to create prefix: ${error.message}`)
+          },
         },
-        onError: (error) => {
-          toast.error(`Failed to create prefix: ${error.message}`)
-        },
-      })
+      )
     }
   }
 
@@ -248,7 +255,10 @@ const CreatePrefix = () => {
             'Register a new prefix in the catalogue'
           )
         }
-        navigateTo={{ label: 'Back to Prefixes', to: '/prefixes' }}
+        navigateTo={{
+          label: 'Back to Prefixes',
+          to: `/prefixes?provider=${routeProviderId}`,
+        }}
       />
 
       {isEditMode && isPrefixLoading ? (
