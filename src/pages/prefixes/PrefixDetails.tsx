@@ -78,9 +78,19 @@ const PrefixDetails = () => {
         className="mb-3"
       >
         {prefix && (
-          <Button href={`/providers/${providerId}/prefixes/${prefix.id}/edit`}>
-            Edit prefix
-          </Button>
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline-primary"
+              href={`/providers/${providerId}/prefixes/${prefix.id}/invite`}
+            >
+              Invite a user
+            </Button>
+            <Button
+              href={`/providers/${providerId}/prefixes/${prefix.id}/edit`}
+            >
+              Edit prefix
+            </Button>
+          </div>
         )}
       </PageHeader>
 

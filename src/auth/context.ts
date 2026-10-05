@@ -6,7 +6,7 @@ export interface AuthContextType {
   registered: boolean
   token?: string
   login: (redirectUri?: string) => void
-  logout: () => void
+  logout: (redirectUri?: string) => void
 }
 
 export const AuthContext = createContext<AuthContextType>({
