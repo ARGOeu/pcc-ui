@@ -22,7 +22,7 @@ const SidebarFooter = ({ profile, onLogout }: SidebarFooterProps) => {
         </div>
         <button
           type="button"
-          onClick={onLogout}
+          onClick={() => onLogout()}
           className="tooltip -m-1 shrink-0 cursor-pointer rounded-lg p-1 transition-colors hover:bg-surface-strong"
           data-tip="Logout"
         >

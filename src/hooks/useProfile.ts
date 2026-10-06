@@ -3,7 +3,7 @@ import { useAuth } from '@/auth/useAuth'
 import { fetchUserProfile } from '@/api/profile'
 import type { UserProfile } from '@/types/profile'
 
-export const useGetUserProfile = () => {
+export const useGetUserProfile = (enabled = true) => {
   const { token } = useAuth()
 
   return useQuery<UserProfile, Error>({
@@ -15,6 +15,6 @@ export const useGetUserProfile = () => {
       return fetchUserProfile(token)
     },
     retry: false,
-    enabled: !!token,
+    enabled: enabled && !!token,
   })
 }

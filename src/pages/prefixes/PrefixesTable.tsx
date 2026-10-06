@@ -66,14 +66,20 @@ const PrefixesTable = ({
                   icon={<Bars3Icon className="size-4 md:size-5" />}
                   label="View prefix"
                   onClick={() =>
-                    void navigate(`/prefixes/${prefix.id}/details`)
+                    void navigate(
+                      `/providers/${prefix.provider_id}/prefixes/${prefix.id}/details`,
+                    )
                   }
                   className="text-muted hover:bg-surface-strong p-1!"
                 />
                 <IconButton
                   icon={<PencilSquareIcon className="size-4 md:size-5" />}
                   label="Edit prefix"
-                  onClick={() => void navigate(`/prefixes/${prefix.id}/edit`)}
+                  onClick={() =>
+                    void navigate(
+                      `/providers/${prefix.provider_id}/prefixes/${prefix.id}/edit`,
+                    )
+                  }
                   className="text-muted hover:bg-surface-strong p-1!"
                 />
                 <IconButton

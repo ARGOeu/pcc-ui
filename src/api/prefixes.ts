@@ -11,6 +11,7 @@ import type {
 const BACKEND_API = import.meta.env.VITE_BACKEND_URI
 
 export const fetchPrefixes = async (
+  providerId: number,
   token: string,
   page = 1,
   size = 10,
@@ -19,7 +20,7 @@ export const fetchPrefixes = async (
   contractType?: string,
   search?: string,
 ): Promise<PrefixesResponse> => {
-  let url = `${BACKEND_API}/api/v1/prefixes?page=${page}&size=${size}`
+  let url = `${BACKEND_API}/api/v1/providers/${providerId}/prefixes?page=${page}&size=${size}`
   if (domain) {
     url += `&domain=${encodeURIComponent(domain)}`
   }
@@ -54,16 +55,20 @@ export const fetchPrefixes = async (
 }
 
 export const fetchPrefix = async (
+  providerId: number,
   id: number,
   token: string,
 ): Promise<Prefix> => {
-  const response = await fetch(`${BACKEND_API}/api/v1/prefixes/${id}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+  const response = await fetch(
+    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${id}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     },
-  })
+  )
 
   if (!response.ok) {
     const errorData = (await response.json().catch(() => ({}))) as {
@@ -78,17 +83,21 @@ export const fetchPrefix = async (
 }
 
 export const createPrefix = async (
+  providerId: number,
   data: PrefixRequest,
   token: string,
 ): Promise<Prefix> => {
-  const response = await fetch(`${BACKEND_API}/api/v1/prefixes`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+  const response = await fetch(
+    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
     },
-    body: JSON.stringify(data),
-  })
+  )
 
   if (!response.ok) {
     const errorData = (await response.json().catch(() => ({}))) as {
@@ -106,18 +115,22 @@ export const createPrefix = async (
 }
 
 export const updatePrefix = async (
+  providerId: number,
   id: number,
   data: PrefixRequest,
   token: string,
 ): Promise<Prefix> => {
-  const response = await fetch(`${BACKEND_API}/api/v1/prefixes/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+  const response = await fetch(
+    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${id}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
     },
-    body: JSON.stringify(data),
-  })
+  )
 
   if (!response.ok) {
     const errorData = (await response.json().catch(() => ({}))) as {
@@ -135,18 +148,22 @@ export const updatePrefix = async (
 }
 
 export const patchPrefix = async (
+  providerId: number,
   id: number,
   data: PrefixPartialRequest,
   token: string,
 ): Promise<Prefix> => {
-  const response = await fetch(`${BACKEND_API}/api/v1/prefixes/${id}`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+  const response = await fetch(
+    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${id}`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
     },
-    body: JSON.stringify(data),
-  })
+  )
 
   if (!response.ok) {
     const errorData = (await response.json().catch(() => ({}))) as {
@@ -164,16 +181,20 @@ export const patchPrefix = async (
 }
 
 export const deletePrefix = async (
+  providerId: number,
   id: number,
   token: string,
 ): Promise<PrefixDeleteResponse> => {
-  const response = await fetch(`${BACKEND_API}/api/v1/prefixes/${id}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+  const response = await fetch(
+    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${id}`,
+    {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     },
-  })
+  )
 
   if (!response.ok) {
     const errorData = (await response.json().catch(() => ({}))) as {
@@ -188,16 +209,20 @@ export const deletePrefix = async (
 }
 
 export const fetchPrefixCount = async (
+  providerId: number,
   name: string,
   token: string,
 ): Promise<number> => {
-  const response = await fetch(`${BACKEND_API}/api/v1/prefixes/${name}/count`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+  const response = await fetch(
+    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${name}/count`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     },
-  })
+  )
 
   if (!response.ok) {
     const errorData = (await response.json().catch(() => ({}))) as {
@@ -212,11 +237,12 @@ export const fetchPrefixCount = async (
 }
 
 export const fetchPrefixResolvableCount = async (
+  providerId: number,
   name: string,
   token: string,
 ): Promise<number> => {
   const response = await fetch(
-    `${BACKEND_API}/api/v1/prefixes/${name}/resolvable`,
+    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${name}/resolvable`,
     {
       method: 'GET',
       headers: {
@@ -239,11 +265,12 @@ export const fetchPrefixResolvableCount = async (
 }
 
 export const fetchPrefixStatistics = async (
+  providerId: number,
   name: string,
   token: string,
 ): Promise<PrefixStatistics> => {
   const response = await fetch(
-    `${BACKEND_API}/api/v1/prefixes/${name}/statistic`,
+    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${name}/statistic`,
     {
       method: 'GET',
       headers: {
@@ -266,12 +293,13 @@ export const fetchPrefixStatistics = async (
 }
 
 export const setPrefixStatistics = async (
+  providerId: number,
   name: string,
   data: PrefixStatisticsRequest,
   token: string,
 ): Promise<PrefixStatistics> => {
   const response = await fetch(
-    `${BACKEND_API}/api/v1/prefixes/${name}/statistic`,
+    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${name}/statistic`,
     {
       method: 'POST',
       headers: {

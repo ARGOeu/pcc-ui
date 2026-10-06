@@ -98,9 +98,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     })
   }
 
-  const logout = () => {
+  const logout = (redirectUri?: string) => {
     void keycloak.logout({
-      redirectUri: import.meta.env.VITE_REDIRECT_URI ?? window.location.origin,
+      redirectUri:
+        redirectUri ??
+        import.meta.env.VITE_REDIRECT_URI ??
+        window.location.origin,
     })
   }
 

@@ -42,15 +42,23 @@ const StatCard = ({ label, value, valueClassName, caption }: StatCardProps) => (
 )
 
 const PrefixDetails = () => {
-  const { id } = useParams<{ id: string }>()
+  const { providerId: providerIdParam, id } = useParams<{
+    providerId: string
+    id: string
+  }>()
+  const providerId = Number(providerIdParam)
   const prefixId = Number(id)
 
-  const { data: prefix, isLoading, error } = useGetPrefix(prefixId, !!id)
+  const {
+    data: prefix,
+    isLoading,
+    error,
+  } = useGetPrefix(providerId, prefixId, !!id)
   const {
     data: statistics,
     isLoading: isStatisticsLoading,
     error: statisticsError,
-  } = useGetPrefixStatistics(prefix?.name ?? '', !!prefix)
+  } = useGetPrefixStatistics(providerId, prefix?.name ?? '', !!prefix)
 
   return (
     <div className="page-container">
@@ -63,11 +71,26 @@ const PrefixDetails = () => {
           )
         }
         subtitle={prefix && `Registered by ${prefix.provider_name}`}
-        navigateTo={{ label: 'Back to prefixes', to: '/prefixes' }}
+        navigateTo={{
+          label: 'Back to prefixes',
+          to: `/prefixes?provider=${providerId}`,
+        }}
         className="mb-3"
       >
         {prefix && (
-          <Button href={`/prefixes/${prefix.id}/edit`}>Edit prefix</Button>
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline-primary"
+              href={`/providers/${providerId}/prefixes/${prefix.id}/invite`}
+            >
+              Invite a user
+            </Button>
+            <Button
+              href={`/providers/${providerId}/prefixes/${prefix.id}/edit`}
+            >
+              Edit prefix
+            </Button>
+          </div>
         )}
       </PageHeader>
 

@@ -1,7 +1,9 @@
-import { TagIcon } from '@heroicons/react/16/solid'
 import { useGetUserProfile } from '@/hooks/useProfile'
+import { useGetUserInvitations } from '@/hooks/useInvitations'
 import { useAuth } from '@/auth/useAuth'
+import { TagIcon } from '@heroicons/react/16/solid'
 import SidebarNavItem from '@/components/sidebar/SidebarNavItem'
+import SidebarSectionLabel from '@/components/sidebar/SidebarSectionLabel'
 import SidebarHeader from '@/components/sidebar/SidebarHeader'
 import SidebarFooter from '@/components/sidebar/SidebarFooter'
 
@@ -13,6 +15,13 @@ interface SidebarProps {
 const Sidebar = ({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) => {
   const { authenticated, logout } = useAuth()
   const { data: profile } = useGetUserProfile()
+  const { data: invitations } = useGetUserInvitations(1, 100, authenticated, {
+    refetchInterval: 60 * 1000,
+    staleTime: 0,
+  })
+  const pendingCount =
+    invitations?.content.filter((invitation) => invitation.status === 'PENDING')
+      .length ?? 0
 
   return (
     <aside
@@ -31,6 +40,15 @@ const Sidebar = ({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) => {
             label="Prefixes"
             onClick={onCloseMobileMenu}
           />
+          <div>
+            <SidebarSectionLabel>Account</SidebarSectionLabel>
+            <SidebarNavItem
+              to="/my-invitations"
+              label="My invitations"
+              badge={pendingCount}
+              onClick={onCloseMobileMenu}
+            />
+          </div>
         </nav>
       ) : (
         <div className="flex-1 flex items-start justify-center px-6 pt-20">
