@@ -15,6 +15,7 @@ import {
 import { toast } from 'sonner'
 import Button from '@/components/Button'
 import LoadingSpinner from '@/components/LoadingSpinner'
+import formatDate from '@/utils/formatDate'
 import getRolePreferredName from '@/utils/getRolePreferredName'
 import type { Invitation, InvitationAction } from '@/types/invitations'
 import type { UserProfile } from '@/types/profile'
@@ -279,12 +280,10 @@ const InvitationReview = () => {
             <DetailField label="Role">{roleName}</DetailField>
             <DetailField label="Email">{invitation.email}</DetailField>
             <DetailField label="Invited on">
-              {new Date(invitation.created_at).toLocaleString('en-GB', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
+              {formatDate({
+                value: invitation.created_at,
+                includeTime: true,
+                utc: false,
               })}
             </DetailField>
           </dl>

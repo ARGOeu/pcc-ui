@@ -10,12 +10,12 @@ import Card from '@/components/Card'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import ErrorDisplay from '@/components/ErrorDisplay'
 import SelectDropdown from '@/components/SelectDropdown'
+import validateEmail from '@/utils/validateEmail'
 import type { FormEvent } from 'react'
 
 const labelClass = 'text-sm font-medium text-body mb-0.5'
 const inputErrorClass =
   'border-red-500! focus:border-red-500! focus:ring-red-500/10!'
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 interface FormData {
   email: string
@@ -26,10 +26,7 @@ const emptyForm: FormData = { email: '', role: '' }
 
 const validateField = (name: keyof FormData, value: string): string => {
   if (name === 'email') {
-    if (!value.trim()) {
-      return 'Email is required'
-    }
-    return emailPattern.test(value.trim()) ? '' : 'Enter a valid email address'
+    return validateEmail(value)
   }
   return value ? '' : 'Select a role'
 }

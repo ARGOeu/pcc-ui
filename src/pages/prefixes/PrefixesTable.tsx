@@ -1,9 +1,9 @@
-import { useNavigate } from 'react-router-dom'
 import {
   Bars3Icon,
   PencilSquareIcon,
   TrashIcon,
 } from '@heroicons/react/16/solid'
+import { UserCog } from 'lucide-react'
 import IconButton from '@/components/IconButton'
 import DataTable, { thBase, tdBase } from '@/components/DataTable'
 import capitalizeWord from '@/utils/capitalizeWord'
@@ -20,8 +20,6 @@ const PrefixesTable = ({
   emptyMessage,
   onDelete,
 }: PrefixesTableProps) => {
-  const navigate = useNavigate()
-
   return (
     <DataTable
       isEmpty={!prefixes.length}
@@ -36,7 +34,7 @@ const PrefixesTable = ({
             <th className={thBase}>Domain</th>
             <th className={thBase}>Contract type</th>
             <th className={thBase}>Contract end</th>
-            <th className={`${thBase} w-40`}>Actions</th>
+            <th className={`${thBase} w-48`}>Actions</th>
           </tr>
         </thead>
       }
@@ -61,25 +59,23 @@ const PrefixesTable = ({
             </td>
             <td className={tdBase}>{prefix.contract_end?.split('T')[0]}</td>
             <td className={`${tdBase} whitespace-nowrap`}>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <IconButton
                   icon={<Bars3Icon className="size-4 md:size-5" />}
                   label="View prefix"
-                  onClick={() =>
-                    void navigate(
-                      `/providers/${prefix.provider_id}/prefixes/${prefix.id}/details`,
-                    )
-                  }
+                  href={`/providers/${prefix.provider_id}/prefixes/${prefix.id}/details`}
                   className="text-muted hover:bg-surface-strong p-1!"
                 />
                 <IconButton
                   icon={<PencilSquareIcon className="size-4 md:size-5" />}
                   label="Edit prefix"
-                  onClick={() =>
-                    void navigate(
-                      `/providers/${prefix.provider_id}/prefixes/${prefix.id}/edit`,
-                    )
-                  }
+                  href={`/providers/${prefix.provider_id}/prefixes/${prefix.id}/edit`}
+                  className="text-muted hover:bg-surface-strong p-1!"
+                />
+                <IconButton
+                  icon={<UserCog className="size-4 md:size-5" />}
+                  label="Manage accounts"
+                  href={`/providers/${prefix.provider_id}/prefixes/${prefix.id}/accounts`}
                   className="text-muted hover:bg-surface-strong p-1!"
                 />
                 <IconButton
