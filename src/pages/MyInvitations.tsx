@@ -14,6 +14,7 @@ import Pagination from '@/components/Pagination'
 import Badge from '@/components/Badge'
 import IconButton from '@/components/IconButton'
 import capitalizeWord from '@/utils/capitalizeWord'
+import formatDate from '@/utils/formatDate'
 import getRolePreferredName from '@/utils/getRolePreferredName'
 import type {
   Invitation,
@@ -34,13 +35,6 @@ const actionText: Record<InvitationAction, { verb: string; past: string }> = {
   ACCEPT: { verb: 'accept', past: 'accepted' },
   REJECT: { verb: 'reject', past: 'rejected' },
 }
-
-const formatDate = (value: string): string =>
-  new Date(value).toLocaleDateString('en-GB', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
 
 const MyInvitations = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -100,7 +94,7 @@ const MyInvitations = () => {
                   <th className={thBase}>Email</th>
                   <th className={thBase}>Role</th>
                   <th className={thBase}>Status</th>
-                  <th className={thBase}>Created at</th>
+                  <th className={thBase}>Created</th>
                   <th className={`${thBase} w-40`}>Actions</th>
                 </tr>
               </thead>
@@ -134,7 +128,7 @@ const MyInvitations = () => {
                     </Badge>
                   </td>
                   <td className={`${tdBase} text-muted whitespace-nowrap`}>
-                    {formatDate(invitation.created_at)}
+                    {formatDate({ value: invitation.created_at, utc: false })}
                   </td>
                   <td className={tdBase}>
                     {invitation.status === 'PENDING' ? (
