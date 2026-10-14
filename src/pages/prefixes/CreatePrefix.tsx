@@ -20,7 +20,7 @@ import SelectDropdown from '@/components/SelectDropdown'
 import capitalizeWord from '@/utils/capitalizeWord'
 
 const sectionClass =
-  'grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-2 lg:gap-8 mb-6 animate-fade-in'
+  'grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-2 lg:gap-8 mb-2 lg:mb-6 animate-fade-in'
 const sectionContentClass =
   'bg-surface-muted border border-line rounded-lg px-5 py-3 flex flex-col justify-center gap-2'
 const labelClass = 'text-sm font-medium text-body mb-0.5'
@@ -242,7 +242,7 @@ const CreatePrefix = () => {
   const isSaving = createMutation.isPending || patchMutation.isPending
 
   return (
-    <div className="page-container">
+    <div className="page-container mb-4">
       <PageHeader
         title={isEditMode ? 'Edit Prefix' : 'Create Prefix'}
         subtitle={
@@ -269,7 +269,7 @@ const CreatePrefix = () => {
         <ErrorDisplay error={prefixError} context="prefix" />
       ) : (
         <>
-          <div className="flex justify-end items-center mb-4">
+          <div className="flex justify-end items-center lg:mb-4">
             <Button
               variant="primary"
               size="md"
@@ -291,7 +291,7 @@ const CreatePrefix = () => {
 
           {/* Prefix details */}
           <div className={sectionClass}>
-            <div className="pt-2 pl-2">
+            <div className="pt-2 lg:pl-2">
               <p className="section-title">Prefix Details</p>
               <p className="section-description">
                 Basic information and contact details for this prefix
@@ -384,7 +384,7 @@ const CreatePrefix = () => {
 
           {/* Service information */}
           <div className={sectionClass}>
-            <div className="pt-2 pl-2">
+            <div className="pt-2 lg:pl-2">
               <p className="section-title">Service Information</p>
               <p className="section-description">
                 The provider, service and domain for this prefix
@@ -466,7 +466,7 @@ const CreatePrefix = () => {
 
           {/* Contract details */}
           <div className={sectionClass}>
-            <div className="pt-2 pl-2">
+            <div className="pt-2 lg:pl-2">
               <p className="section-title">Contract Details</p>
               <p className="section-description">
                 Contract and lookup service details for this prefix
@@ -553,7 +553,7 @@ const CreatePrefix = () => {
 
           {/* Resolvability */}
           <div className={sectionClass}>
-            <div className="pt-2 pl-2">
+            <div className="pt-2 lg:pl-2">
               <h2 className="section-title">Resolvability</h2>
               <p className="section-description">
                 Indicates whether this prefix is expected to be resolvable

@@ -14,6 +14,8 @@ import CreatePrefix from '@/pages/prefixes/CreatePrefix'
 import PrefixDetails from '@/pages/prefixes/PrefixDetails'
 import EndpointsAccess from '@/pages/endpoints-access'
 import InviteUser from '@/pages/prefixes/InviteUser'
+import Accounts from '@/pages/prefixes/Accounts'
+import CreateAccount from '@/pages/prefixes/CreateAccount'
 import MyInvitations from '@/pages/MyInvitations'
 import InvitationReview from '@/pages/InvitationReview'
 import { AuthProvider } from '@/auth/AuthProvider'
@@ -74,6 +76,18 @@ const App = () => {
               <Route
                 path="providers/:providerId/prefixes/:id/invite"
                 element={<InviteUser />}
+              />
+              <Route
+                path="providers/:providerId/prefixes/:id/accounts"
+                element={<Accounts />}
+              />
+              <Route
+                path="providers/:providerId/prefixes/:id/accounts/add"
+                element={<CreateAccount />}
+              />
+              <Route
+                path="providers/:providerId/prefixes/:id/accounts/:accountId/edit"
+                element={<CreateAccount />}
               />
               <Route path="my-invitations" element={<MyInvitations />} />
               <Route path="endpoints-access" element={<EndpointsAccess />} />
