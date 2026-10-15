@@ -8,6 +8,13 @@ import type { Account } from '@/types/accounts'
 const fieldLabelClass = 'text-[13px] text-muted mb-0.5'
 const monoValueClass = 'font-mono text-sm leading-4 text-foreground'
 
+const handleServiceRoutes = [
+  { method: 'GET', template: '/api/handles?prefix={prefix}' },
+  { method: 'GET', template: '/api/handles/{prefix}/{suffix}' },
+  { method: 'PUT', template: '/api/handles/{prefix}/{suffix}' },
+  { method: 'DELETE', template: '/api/handles/{prefix}/{suffix}' },
+]
+
 interface CopyButtonProps {
   label: string
   value: string
@@ -52,72 +59,96 @@ const AccountRecord = ({
     : account.email
 
   return (
-    <div className="flex flex-col gap-1.5 rounded-lg border border-line bg-white px-5 pt-4 pb-3 shadow-sm">
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <div className="flex items-start gap-1">
-            <h2
-              title={account.username ? 'Handle service username' : undefined}
-              className="min-w-0 break-all font-mono text-base leading-5 font-medium text-foreground"
-            >
-              {title}
-            </h2>
+    <div className="rounded-lg border border-line bg-white px-5 pt-4 pb-3 shadow-sm">
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <div className="flex items-start gap-1">
+              <h2
+                title={account.username ? 'Handle service username' : undefined}
+                className="min-w-0 break-all font-mono text-base leading-5 font-medium text-foreground"
+              >
+                {title}
+              </h2>
+              {account.username && (
+                <CopyButton
+                  label="Username"
+                  value={account.username}
+                  className="-my-px"
+                />
+              )}
+            </div>
             {account.username && (
-              <CopyButton
-                label="Username"
-                value={account.username}
-                className="-my-px"
-              />
+              <p className="break-all text-sm leading-4 text-muted">
+                {account.email}
+              </p>
             )}
           </div>
-          {account.username && (
-            <p className="break-all text-sm leading-4 text-muted">
-              {account.email}
-            </p>
-          )}
+          <div className="-mr-2 -mt-0.5 flex shrink-0 gap-0.5">
+            <IconButton
+              icon={<PencilSquareIcon className="size-4" />}
+              label="Edit account"
+              href={editHref}
+              className="tooltip-left text-muted hover:bg-surface-strong"
+            />
+            <IconButton
+              icon={<TrashIcon className="size-4" />}
+              label="Delete account"
+              onClick={() => onDelete(account)}
+              className="tooltip-left text-red-600 hover:bg-red-50"
+            />
+          </div>
         </div>
-        <div className="-mr-2 -mt-0.5 flex shrink-0 gap-0.5">
-          <IconButton
-            icon={<PencilSquareIcon className="size-4" />}
-            label="Edit account"
-            href={editHref}
-            className="tooltip-left text-muted hover:bg-surface-strong"
-          />
-          <IconButton
-            icon={<TrashIcon className="size-4" />}
-            label="Delete account"
-            onClick={() => onDelete(account)}
-            className="tooltip-left text-red-600 hover:bg-red-50"
-          />
-        </div>
-      </div>
 
-      <div className="min-w-0">
-        <p className={fieldLabelClass}>Endpoint</p>
-        <div className="flex w-fit max-w-full items-start gap-1">
-          <code
-            title={account.endpoint}
-            className={`${monoValueClass} min-w-0 break-all line-clamp-3`}
-          >
-            {account.endpoint}
-          </code>
-          <CopyButton
-            label="Endpoint"
-            value={account.endpoint}
-            className="-my-0.75"
-          />
+        <div className="min-w-0">
+          <p className={fieldLabelClass}>Endpoint</p>
+          <div className="flex w-fit max-w-full items-start gap-1">
+            <code
+              title={account.endpoint}
+              className={`${monoValueClass} min-w-0 break-all line-clamp-3`}
+            >
+              {account.endpoint}
+            </code>
+            <CopyButton
+              label="Endpoint"
+              value={account.endpoint}
+              className="-my-0.75"
+            />
+          </div>
         </div>
-      </div>
 
-      <div className="grid grid-cols-2 gap-x-12 gap-y-2">
-        <div className="min-w-0">
-          <p className={fieldLabelClass}>Admin index</p>
-          <p className={monoValueClass}>{account.admin_index}</p>
+        <div className="grid grid-cols-2 gap-x-12 gap-y-2">
+          <div className="min-w-0">
+            <p className={fieldLabelClass}>Admin index</p>
+            <p className={monoValueClass}>{account.admin_index}</p>
+          </div>
+          <div className="min-w-0">
+            <p className={fieldLabelClass}>Permissions</p>
+            <p className={monoValueClass}>{account.permissions}</p>
+          </div>
         </div>
-        <div className="min-w-0">
-          <p className={fieldLabelClass}>Permissions</p>
-          <p className={monoValueClass}>{account.permissions}</p>
-        </div>
+
+        {prefixName && (
+          <div className="mt-2 min-w-0 border-t border-line pt-3">
+            <p className={`${fieldLabelClass} mb-1.5`}>Handle service API</p>
+            <ul className="flex flex-col gap-1.5">
+              {handleServiceRoutes.map(({ method, template }) => (
+                <li
+                  key={`${method} ${template}`}
+                  className="flex items-baseline gap-1.5"
+                >
+                  <span className="w-14 shrink-0 text-xs font-semibold text-muted">
+                    {method}
+                  </span>
+                  <code className="min-w-0 break-all font-mono text-[13px] leading-4 text-body">
+                    {account.endpoint.replace(/\/+$/, '')}
+                    {template.replace('{prefix}', prefixName)}
+                  </code>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       <p className="flex items-baseline justify-end gap-1 text-xs text-muted">
