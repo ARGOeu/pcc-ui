@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useGetPrefixes, useDeletePrefixMutation } from '@/hooks/usePrefixes'
+import { useGetAllPrefixes } from '@/hooks/useAdmin'
 import { useGetProviders } from '@/hooks/useProviders'
 import { useGetDomains } from '@/hooks/useDomains'
 import { useGetContractTypes } from '@/hooks/useCodelist'
@@ -19,6 +20,7 @@ import PrefixesTable from './PrefixesTable'
 import type { Prefix } from '@/types/prefixes'
 
 const pageSize = 10
+const allTabId = 'all'
 
 const Prefixes = () => {
   const navigate = useNavigate()
@@ -38,10 +40,12 @@ const Prefixes = () => {
     error: providersError,
   } = useGetProviders()
   const providerParam = Number(searchParams.get('provider'))
-  const activeProvider =
-    providers?.find((provider) => provider.id === providerParam) ??
-    providers?.[0]
-  const { data, isLoading, error } = useGetPrefixes(
+  const activeProvider = providers?.find(
+    (provider) => provider.id === providerParam,
+  )
+  const isAllActive = !activeProvider
+  const createProvider = activeProvider ?? providers?.[0]
+  const providerPrefixes = useGetPrefixes(
     activeProvider?.id ?? 0,
     currentPage,
     pageSize,
@@ -51,6 +55,18 @@ const Prefixes = () => {
     searchQuery || undefined,
     !!activeProvider,
   )
+  const allPrefixes = useGetAllPrefixes(
+    currentPage,
+    pageSize,
+    domainFilter || undefined,
+    undefined,
+    contractTypeFilter || undefined,
+    searchQuery || undefined,
+    isAllActive,
+  )
+  const { data, isLoading, error } = isAllActive
+    ? allPrefixes
+    : providerPrefixes
   const { data: domains } = useGetDomains()
   const { data: contractTypes } = useGetContractTypes()
   const deleteMutation = useDeletePrefixMutation()
@@ -126,11 +142,13 @@ const Prefixes = () => {
     ? 'No prefixes match your filters'
     : 'No prefixes found'
 
-  const providerTabs =
-    providers?.map((provider) => ({
+  const providerTabs = [
+    { id: allTabId, label: 'All' },
+    ...(providers?.map((provider) => ({
       id: String(provider.id),
       label: provider.name,
-    })) ?? []
+    })) ?? []),
+  ]
 
   const domainOptions = [
     { value: '', label: 'All domains' },
@@ -176,9 +194,9 @@ const Prefixes = () => {
       >
         <Button
           variant="primary"
-          disabled={!activeProvider}
+          disabled={!createProvider}
           onClick={() =>
-            void navigate(`/providers/${activeProvider?.id}/prefixes/add`)
+            void navigate(`/providers/${createProvider?.id}/prefixes/add`)
           }
         >
           Create prefix
@@ -194,7 +212,9 @@ const Prefixes = () => {
         <>
           <Tabs
             tabs={providerTabs}
-            activeTab={String(activeProvider?.id ?? '')}
+            activeTab={
+              isAllActive ? allTabId : String(activeProvider?.id ?? '')
+            }
             onChange={handleProviderTabChange}
             className="mb-3"
           />

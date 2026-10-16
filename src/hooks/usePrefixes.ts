@@ -123,6 +123,7 @@ export const useCreatePrefixMutation = () => {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['prefixes'] })
+      void queryClient.invalidateQueries({ queryKey: ['admin-prefixes'] })
     },
     onError: (error) => {
       console.error('Prefix create error:', error)
@@ -161,6 +162,7 @@ export const useUpdatePrefixMutation = () => {
     },
     onSuccess: (_, { providerId, id }) => {
       void queryClient.invalidateQueries({ queryKey: ['prefixes'] })
+      void queryClient.invalidateQueries({ queryKey: ['admin-prefixes'] })
       void queryClient.invalidateQueries({
         queryKey: ['prefix', providerId, id],
       })
@@ -202,6 +204,7 @@ export const usePatchPrefixMutation = () => {
     },
     onSuccess: (_, { providerId, id }) => {
       void queryClient.invalidateQueries({ queryKey: ['prefixes'] })
+      void queryClient.invalidateQueries({ queryKey: ['admin-prefixes'] })
       void queryClient.invalidateQueries({
         queryKey: ['prefix', providerId, id],
       })
@@ -231,6 +234,7 @@ export const useDeletePrefixMutation = () => {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['prefixes'] })
+      void queryClient.invalidateQueries({ queryKey: ['admin-prefixes'] })
     },
     onError: (error) => {
       console.error('Prefix delete error:', error)
