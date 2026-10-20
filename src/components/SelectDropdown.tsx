@@ -11,7 +11,7 @@ import {
   ChevronUpDownIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/react/16/solid'
-import type { KeyboardEvent } from 'react'
+import type { KeyboardEvent, ReactNode } from 'react'
 
 export interface SelectOption {
   value: string
@@ -24,9 +24,12 @@ interface SelectDropdownProps {
   value: string
   onChange: (value: string) => void
   options: SelectOption[]
+  selectedLabel?: string
   placeholder?: string
   disabled?: boolean
   searchable?: boolean
+  onSearchChange?: (query: string) => void
+  footer?: ReactNode
   className?: string
 }
 
@@ -34,9 +37,12 @@ const SelectDropdown = ({
   value,
   onChange,
   options,
+  selectedLabel,
   placeholder = 'Select an option...',
   disabled = false,
   searchable = false,
+  onSearchChange,
+  footer,
   className,
 }: SelectDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -48,7 +54,7 @@ const SelectDropdown = ({
   const listboxId = useId()
 
   const filteredOptions =
-    searchable && searchQuery
+    searchable && searchQuery && !onSearchChange
       ? options.filter((option) =>
           option.label.toLowerCase().includes(searchQuery.toLowerCase()),
         )
@@ -63,7 +69,8 @@ const SelectDropdown = ({
     setIsOpen(false)
     setActiveIndex(-1)
     setSearchQuery('')
-  }, [])
+    onSearchChange?.('')
+  }, [onSearchChange])
 
   useEffect(() => {
     if (!isOpen) return
@@ -168,7 +175,10 @@ const SelectDropdown = ({
     if (disabled) return
     const handleActivate = () => {
       if (isOpen && activeIndexRef.current >= 0) {
-        handleSelect(filteredOptions[activeIndexRef.current])
+        const option = filteredOptions.at(activeIndexRef.current)
+        if (option) {
+          handleSelect(option)
+        }
       } else if (!isOpen) {
         openMenu()
       }
@@ -218,7 +228,7 @@ const SelectDropdown = ({
         aria-activedescendant={
           activeIndex >= 0 ? `${listboxId}-option-${activeIndex}` : undefined
         }
-        value={selectedOption?.label ?? ''}
+        value={selectedOption?.label ?? selectedLabel ?? ''}
         placeholder={placeholder}
         disabled={disabled}
         onClick={handleToggle}
@@ -240,7 +250,11 @@ const SelectDropdown = ({
                   ref={searchInputRef}
                   type="text"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value)
+                    setActiveIndex(-1)
+                    onSearchChange?.(e.target.value)
+                  }}
                   onKeyDown={handleKeyDown}
                   placeholder="Search..."
                   className="flex-1 text-sm border-0 outline-none ring-0 focus:ring-0 bg-transparent p-0 placeholder:text-subtle"
@@ -285,6 +299,11 @@ const SelectDropdown = ({
                 )
               )}
             </ul>
+            {footer && (
+              <div className="px-3 py-2 border-t border-line bg-surface-muted text-xs text-muted">
+                {footer}
+              </div>
+            )}
           </div>,
           document.body,
         )}

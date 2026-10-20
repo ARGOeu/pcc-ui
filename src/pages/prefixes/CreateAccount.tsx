@@ -12,6 +12,7 @@ import Button from '@/components/Button'
 import Card from '@/components/Card'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import ErrorDisplay from '@/components/ErrorDisplay'
+import isValidUrl from '@/utils/isValidUrl'
 import validateEmail from '@/utils/validateEmail'
 import type { FormEvent } from 'react'
 
@@ -26,15 +27,6 @@ interface FormData {
 }
 
 const emptyForm: FormData = { email: '', endpoint: '', username: '' }
-
-const isValidUrl = (value: string): boolean => {
-  try {
-    const { protocol } = new URL(value)
-    return protocol === 'http:' || protocol === 'https:'
-  } catch {
-    return false
-  }
-}
 
 const validateField = (name: keyof FormData, value: string): string => {
   if (name === 'email') {

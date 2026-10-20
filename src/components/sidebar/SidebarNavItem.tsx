@@ -4,10 +4,17 @@ interface SidebarNavItemProps {
   to: string
   label: string
   badge?: number
+  active?: boolean
   onClick?: () => void
 }
 
-const SidebarNavItem = ({ to, label, badge, onClick }: SidebarNavItemProps) => {
+const SidebarNavItem = ({
+  to,
+  label,
+  badge,
+  active,
+  onClick,
+}: SidebarNavItemProps) => {
   return (
     <NavLink
       to={to}
@@ -15,7 +22,7 @@ const SidebarNavItem = ({ to, label, badge, onClick }: SidebarNavItemProps) => {
       onClick={onClick}
       className={({ isActive }) =>
         `block rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-          isActive
+          (active ?? isActive)
             ? 'bg-brand-subtle text-brand'
             : 'text-gray-700 hover:bg-gray-100'
         }`
