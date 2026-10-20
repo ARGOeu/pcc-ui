@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useGetAllPrefixes } from '@/hooks/useAdmin'
+import { useGetAdminPrefixes } from '@/hooks/useAdmin'
 import { useGetPrefix } from '@/hooks/usePrefixes'
 import { Navigate } from 'react-router-dom'
 import PageHeader from '@/components/PageHeader'
@@ -23,7 +23,7 @@ const HandlesEntry = () => {
     !!lastPrefix,
   )
   const useFirstPrefix = !lastPrefix || !!savedError
-  const { data, isLoading, error } = useGetAllPrefixes(
+  const { data, isLoading, error } = useGetAdminPrefixes(
     1,
     1,
     undefined,

@@ -1,14 +1,18 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import {
+  keepPreviousData,
+  useInfiniteQuery,
+  useQuery,
+} from '@tanstack/react-query'
 import { useAuth } from '@/auth/useAuth'
 import {
-  fetchAllPrefixes,
+  fetchPrefixes,
   fetchRoleAssignmentMetadata,
   fetchRoleMetadata,
 } from '@/api/admin'
 import type { RoleAssignmentMetadata, RoleMetadata } from '@/types/admin'
 import type { PrefixesResponse } from '@/types/prefixes'
 
-export const useGetAllPrefixes = (
+export const useGetAdminPrefixes = (
   page = 1,
   size = 10,
   domain?: string,
@@ -33,7 +37,7 @@ export const useGetAllPrefixes = (
       if (!token) {
         throw new Error('No authentication token available')
       }
-      return fetchAllPrefixes(
+      return fetchPrefixes(
         token,
         page,
         size,
@@ -44,6 +48,42 @@ export const useGetAllPrefixes = (
       )
     },
     placeholderData: keepPreviousData,
+    retry: false,
+    enabled: enabled && !!token,
+  })
+}
+
+export const useGetAllPrefixes = (
+  size = 10,
+  search?: string,
+  provider?: string,
+  enabled = true,
+) => {
+  const { token } = useAuth()
+
+  return useInfiniteQuery({
+    queryKey: ['admin-prefixes', 'pages', size, provider, search],
+    queryFn: ({ pageParam }) => {
+      if (!token) {
+        throw new Error('No authentication token available')
+      }
+      return fetchPrefixes(
+        token,
+        pageParam,
+        size,
+        undefined,
+        provider,
+        undefined,
+        search,
+      )
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: PrefixesResponse) =>
+      lastPage.number_of_page < lastPage.total_pages
+        ? lastPage.number_of_page + 1
+        : undefined,
+    placeholderData: (previousData, previousQuery) =>
+      previousQuery?.queryKey[3] === provider ? previousData : undefined,
     retry: false,
     enabled: enabled && !!token,
   })

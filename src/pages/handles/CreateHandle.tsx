@@ -5,6 +5,7 @@ import {
   useGetHandle,
   useUpdateHandleMutation,
 } from '@/hooks/useHandles'
+import { useValidateUrlMutation } from '@/hooks/useValidation'
 import { useHandleAccess } from '@/auth/useHandleAccess'
 import { isTokenRejected } from '@/api/handles'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
@@ -31,7 +32,7 @@ import {
 } from '@/utils/validateHandle'
 import type { FormEvent } from 'react'
 
-const labelClass = 'text-sm font-medium text-body mb-0.5'
+const labelClass = 'text-base font-medium text-body'
 const inputErrorClass =
   'border-red-500! focus:border-red-500! focus:ring-red-500/10!'
 const errorTextClass = 'text-xs text-red-500 mt-1'
@@ -106,6 +107,7 @@ const CreateHandle = () => {
   } = useGetHandle(providerId, prefixId, suffixParam ?? '', access, isEditMode)
   const createMutation = useCreateHandleMutation()
   const updateMutation = useUpdateHandleMutation()
+  const verifyMutation = useValidateUrlMutation()
 
   useEffect(() => {
     if (handle) {
@@ -135,6 +137,13 @@ const CreateHandle = () => {
   const handleChange = (name: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }))
     setErrors((prev) => ({ ...prev, [name]: validators[name](value) }))
+    if (name === 'url') {
+      verifyMutation.reset()
+    }
+  }
+
+  const handleVerify = () => {
+    verifyMutation.mutate({ url: formData.url.trim() })
   }
 
   const handleFieldKeyChange = (rowId: string, value: string) => {
@@ -250,7 +259,7 @@ const CreateHandle = () => {
       ) : isEditMode && handleError ? (
         <ErrorDisplay error={handleError} context="handle" />
       ) : (
-        <form onSubmit={handleSubmit} noValidate className="max-w-2xl">
+        <form onSubmit={handleSubmit} noValidate className="max-w-3xl">
           <Card
             footer={
               <div className="flex w-full items-center justify-between">
@@ -283,10 +292,10 @@ const CreateHandle = () => {
               </div>
             }
           >
-            <div className="flex flex-col gap-4 px-6 py-4">
+            <div className="flex flex-col gap-2 px-6 py-4">
               <div className="flex flex-col">
                 <div className="flex items-baseline justify-between gap-3">
-                  <label className={labelClass}>
+                  <label className={`${labelClass} mb-0.5`}>
                     Suffix <span className="required">*</span>
                   </label>
                   {!isEditMode && (
@@ -326,31 +335,64 @@ const CreateHandle = () => {
               </div>
 
               <div className="flex flex-col">
-                <label className={labelClass}>
+                <label className={`${labelClass} mb-0.5`}>
                   Target URL <span className="required">*</span>
                 </label>
-                <input
-                  type="text"
-                  value={formData.url}
-                  onChange={(e) => handleChange('url', e.target.value)}
-                  placeholder="https://..."
-                  className={errors.url ? inputErrorClass : ''}
-                />
-                {errors.url && (
+                <div className="flex items-stretch gap-2">
+                  <input
+                    type="text"
+                    value={formData.url}
+                    onChange={(e) => handleChange('url', e.target.value)}
+                    placeholder="https://..."
+                    className={`min-w-0 flex-1 ${errors.url ? inputErrorClass : ''}`}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline-secondary"
+                    size="sm"
+                    onClick={handleVerify}
+                    disabled={
+                      !!validateUrl(formData.url) || verifyMutation.isPending
+                    }
+                  >
+                    {verifyMutation.isPending ? (
+                      <>
+                        <LoadingSpinner size="xs" className="size-5!" />
+                        Verifying
+                      </>
+                    ) : (
+                      'Verify'
+                    )}
+                  </Button>
+                </div>
+                {errors.url ? (
                   <span className={errorTextClass}>{errors.url}</span>
-                )}
+                ) : verifyMutation.data?.reachable ? (
+                  <span className="mt-1 text-xs text-emerald-700">
+                    The URL is reachable
+                  </span>
+                ) : verifyMutation.data ? (
+                  <span className="mt-1 text-xs text-red-600">
+                    The URL could not be reached. You can still save the handle
+                  </span>
+                ) : verifyMutation.error ? (
+                  <span className="mt-1 text-xs text-red-600">
+                    The URL could not be checked now. You can still save the
+                    handle
+                  </span>
+                ) : null}
               </div>
 
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1.5">
                 <div>
-                  <h2 className="section-title">Custom fields</h2>
-                  <p className="section-description">
+                  <h2 className={labelClass}>Custom fields</h2>
+                  <p className="section-description text-[13px]">
                     Add extra values to the handle as key and value pairs
                   </p>
                 </div>
 
                 {fields.length > 0 && (
-                  <div className="grid grid-cols-[minmax(0,12.5rem)_minmax(0,1fr)_auto] items-center gap-2">
+                  <div className="grid grid-cols-[minmax(0,12.5rem)_minmax(0,1fr)_auto] items-center gap-x-1.5 gap-y-2">
                     {fields.map((row, index) => (
                       <div key={row.id} className="contents">
                         <input
@@ -374,8 +416,8 @@ const CreateHandle = () => {
                           className={row.valueError ? inputErrorClass : ''}
                         />
                         <IconButton
-                          icon={<XMarkIcon className="size-4" />}
-                          label={`Remove field ${index + 1}`}
+                          icon={<XMarkIcon className="size-5" />}
+                          label=""
                           onClick={() =>
                             setFields((prev) =>
                               prev.filter((item) => item.id !== row.id),

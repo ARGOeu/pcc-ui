@@ -11,7 +11,7 @@ import {
   ChevronUpDownIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/react/16/solid'
-import type { KeyboardEvent, ReactNode } from 'react'
+import type { KeyboardEvent, ReactNode, UIEvent } from 'react'
 
 export interface SelectOption {
   value: string
@@ -19,6 +19,8 @@ export interface SelectOption {
   disabled?: boolean
   isPlaceholder?: boolean
 }
+
+type ListSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 
 interface SelectDropdownProps {
   value: string
@@ -29,8 +31,21 @@ interface SelectDropdownProps {
   disabled?: boolean
   searchable?: boolean
   onSearchChange?: (query: string) => void
+  onScrollEnd?: () => void
   footer?: ReactNode
+  listSize?: ListSize
   className?: string
+}
+
+// Call onScrollEnd when fewer than this many pixels are left to scroll
+const scrollEndOffset = 32
+
+const listSizeClasses: Record<ListSize, string> = {
+  xs: 'max-h-40',
+  sm: 'max-h-48',
+  md: 'max-h-60',
+  lg: 'max-h-80',
+  xl: 'max-h-96',
 }
 
 const SelectDropdown = ({
@@ -42,7 +57,9 @@ const SelectDropdown = ({
   disabled = false,
   searchable = false,
   onSearchChange,
+  onScrollEnd,
   footer,
+  listSize = 'md',
   className,
 }: SelectDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -214,6 +231,16 @@ const SelectDropdown = ({
     }
   }
 
+  const handleListScroll = (e: UIEvent<HTMLUListElement>) => {
+    const list = e.currentTarget
+    if (
+      list.scrollHeight - list.scrollTop - list.clientHeight <
+      scrollEndOffset
+    ) {
+      onScrollEnd?.()
+    }
+  }
+
   const selectedOption = options.find((o) => o.value === value)
 
   return (
@@ -263,8 +290,9 @@ const SelectDropdown = ({
             )}
             <ul
               id={listboxId}
-              className="max-h-60 overflow-y-auto"
+              className={`${listSizeClasses[listSize]} overflow-y-auto`}
               role="listbox"
+              onScroll={onScrollEnd ? handleListScroll : undefined}
             >
               {filteredOptions.length === 0 ? (
                 <li className="px-4 py-3 text-sm text-subtle italic text-center">
