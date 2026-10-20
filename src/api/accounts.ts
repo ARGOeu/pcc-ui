@@ -6,6 +6,8 @@ import type {
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_URI
 
+type AccountsError = Error & { notFound?: boolean }
+
 export const fetchAccounts = async (
   providerId: number,
   prefixId: number,
@@ -31,9 +33,11 @@ export const fetchAccounts = async (
     const errorData = (await response.json().catch(() => ({}))) as {
       message?: string
     }
-    throw new Error(
+    const error: AccountsError = new Error(
       errorData.message ?? `HTTP error! status: ${response.status}`,
     )
+    error.notFound = response.status === 404
+    throw error
   }
 
   return (await response.json()) as AccountsResponse

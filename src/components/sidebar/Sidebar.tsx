@@ -1,6 +1,7 @@
 import { useGetUserProfile } from '@/hooks/useProfile'
 import { useGetUserInvitations } from '@/hooks/useInvitations'
 import { useAuth } from '@/auth/useAuth'
+import { useLocation } from 'react-router-dom'
 import { TagIcon } from '@heroicons/react/16/solid'
 import SidebarNavItem from '@/components/sidebar/SidebarNavItem'
 import SidebarSectionLabel from '@/components/sidebar/SidebarSectionLabel'
@@ -14,6 +15,7 @@ interface SidebarProps {
 
 const Sidebar = ({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) => {
   const { authenticated, logout } = useAuth()
+  const { pathname } = useLocation()
   const { data: profile } = useGetUserProfile()
   const { data: invitations } = useGetUserInvitations(1, 100, authenticated, {
     refetchInterval: 60 * 1000,
@@ -38,6 +40,12 @@ const Sidebar = ({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) => {
           <SidebarNavItem
             to="/prefixes"
             label="Prefixes"
+            onClick={onCloseMobileMenu}
+          />
+          <SidebarNavItem
+            to="/handles"
+            label="Handles"
+            active={/\/handles(\/|$)/.test(pathname)}
             onClick={onCloseMobileMenu}
           />
           <div>

@@ -190,7 +190,7 @@ const Prefixes = () => {
       <PageHeader
         title="Prefixes"
         subtitle="Browse the prefixes registered in the catalogue"
-        className="mb-4"
+        className="mb-2"
       >
         <Button
           variant="primary"

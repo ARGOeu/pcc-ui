@@ -15,10 +15,15 @@ import PrefixDetails from '@/pages/prefixes/PrefixDetails'
 import EndpointsAccess from '@/pages/endpoints-access'
 import InviteUser from '@/pages/prefixes/InviteUser'
 import Accounts from '@/pages/prefixes/Accounts'
+import Handles from '@/pages/handles/Handles'
+import CreateHandle from '@/pages/handles/CreateHandle'
+import HandleDetails from '@/pages/handles/HandleDetails'
+import HandlesEntry from '@/pages/handles/HandlesEntry'
 import CreateAccount from '@/pages/prefixes/CreateAccount'
 import MyInvitations from '@/pages/MyInvitations'
 import InvitationReview from '@/pages/InvitationReview'
 import { AuthProvider } from '@/auth/AuthProvider'
+import { HandleAccessProvider } from '@/auth/HandleAccessProvider'
 import { notifySessionExpired } from '@/auth/authEvents'
 
 const isUnauthorized = (error: Error) =>
@@ -56,44 +61,63 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
-            <Route path="invitation/:id" element={<InvitationReview />} />
-            <Route element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path="prefixes" element={<Prefixes />} />
-              <Route
-                path="providers/:providerId/prefixes/add"
-                element={<CreatePrefix />}
-              />
-              <Route
-                path="providers/:providerId/prefixes/:id/details"
-                element={<PrefixDetails />}
-              />
-              <Route
-                path="providers/:providerId/prefixes/:id/edit"
-                element={<CreatePrefix />}
-              />
-              <Route
-                path="providers/:providerId/prefixes/:id/invite"
-                element={<InviteUser />}
-              />
-              <Route
-                path="providers/:providerId/prefixes/:id/accounts"
-                element={<Accounts />}
-              />
-              <Route
-                path="providers/:providerId/prefixes/:id/accounts/add"
-                element={<CreateAccount />}
-              />
-              <Route
-                path="providers/:providerId/prefixes/:id/accounts/:accountId/edit"
-                element={<CreateAccount />}
-              />
-              <Route path="my-invitations" element={<MyInvitations />} />
-              <Route path="endpoints-access" element={<EndpointsAccess />} />
-              <Route path="*" element={<NotFound />} />
-            </Route>
-          </Routes>
+          <HandleAccessProvider>
+            <Routes>
+              <Route path="invitation/:id" element={<InvitationReview />} />
+              <Route element={<Layout />}>
+                <Route index element={<Home />} />
+                <Route path="prefixes" element={<Prefixes />} />
+                <Route
+                  path="providers/:providerId/prefixes/add"
+                  element={<CreatePrefix />}
+                />
+                <Route
+                  path="providers/:providerId/prefixes/:id/details"
+                  element={<PrefixDetails />}
+                />
+                <Route
+                  path="providers/:providerId/prefixes/:id/edit"
+                  element={<CreatePrefix />}
+                />
+                <Route
+                  path="providers/:providerId/prefixes/:id/invite"
+                  element={<InviteUser />}
+                />
+                <Route
+                  path="providers/:providerId/prefixes/:id/accounts"
+                  element={<Accounts />}
+                />
+                <Route
+                  path="providers/:providerId/prefixes/:id/accounts/add"
+                  element={<CreateAccount />}
+                />
+                <Route
+                  path="providers/:providerId/prefixes/:id/accounts/:accountId/edit"
+                  element={<CreateAccount />}
+                />
+                <Route path="handles" element={<HandlesEntry />} />
+                <Route
+                  path="providers/:providerId/prefixes/:id/handles"
+                  element={<Handles />}
+                />
+                <Route
+                  path="providers/:providerId/prefixes/:id/handles/:suffix"
+                  element={<HandleDetails />}
+                />
+                <Route
+                  path="providers/:providerId/prefixes/:id/handles/add"
+                  element={<CreateHandle />}
+                />
+                <Route
+                  path="providers/:providerId/prefixes/:id/handles/:suffix/edit"
+                  element={<CreateHandle />}
+                />
+                <Route path="my-invitations" element={<MyInvitations />} />
+                <Route path="endpoints-access" element={<EndpointsAccess />} />
+                <Route path="*" element={<NotFound />} />
+              </Route>
+            </Routes>
+          </HandleAccessProvider>
         </AuthProvider>
         <Toaster richColors position="top-center" duration={2000} />
       </BrowserRouter>

@@ -1,5 +1,6 @@
 import {
   Bars3Icon,
+  LinkIcon,
   PencilSquareIcon,
   TrashIcon,
 } from '@heroicons/react/16/solid'
@@ -70,6 +71,12 @@ const PrefixesTable = ({
                   icon={<PencilSquareIcon className="size-4 md:size-5" />}
                   label="Edit prefix"
                   href={`/providers/${prefix.provider_id}/prefixes/${prefix.id}/edit`}
+                  className="text-muted hover:bg-surface-strong p-1!"
+                />
+                <IconButton
+                  icon={<LinkIcon className="size-4 md:size-5" />}
+                  label="Manage handles"
+                  href={`/providers/${prefix.provider_id}/prefixes/${prefix.id}/handles`}
                   className="text-muted hover:bg-surface-strong p-1!"
                 />
                 <IconButton
