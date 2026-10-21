@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useGetPrefixes, useDeletePrefixMutation } from '@/hooks/usePrefixes'
-import { useGetAllPrefixes } from '@/hooks/useAdmin'
+import { useGetAdminPrefixes } from '@/hooks/useAdmin'
 import { useGetProviders } from '@/hooks/useProviders'
 import { useGetDomains } from '@/hooks/useDomains'
 import { useGetContractTypes } from '@/hooks/useCodelist'
@@ -55,7 +55,7 @@ const Prefixes = () => {
     searchQuery || undefined,
     !!activeProvider,
   )
-  const allPrefixes = useGetAllPrefixes(
+  const allPrefixes = useGetAdminPrefixes(
     currentPage,
     pageSize,
     domainFilter || undefined,

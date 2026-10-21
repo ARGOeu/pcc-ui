@@ -3,7 +3,7 @@ import type { PrefixesResponse } from '@/types/prefixes'
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_URI
 
-export const fetchAllPrefixes = async (
+export const fetchPrefixes = async (
   token: string,
   page = 1,
   size = 10,

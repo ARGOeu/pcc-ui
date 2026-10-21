@@ -212,7 +212,7 @@ const AuthorizeDialog = ({
           >
             {isPending ? (
               <span className="flex items-center gap-1.5">
-                <LoadingSpinner size="xs" />
+                <LoadingSpinner size="xs" className="text-white!" />
                 Checking...
               </span>
             ) : (

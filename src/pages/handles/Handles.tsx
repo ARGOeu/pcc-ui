@@ -176,72 +176,74 @@ const HandlesView = ({ providerId, prefixId }: HandlesViewProps) => {
             onChange={setSearchInput}
             onClear={handleSearchClear}
             placeholder="Search by handle name..."
-            className="ml-auto w-full sm:w-80 mb-0!"
+            maxWidth="max-w-none"
+            className="w-full sm:w-80 mb-0!"
           />
         )}
       </div>
-
-      {prefixError ? (
-        <ErrorDisplay error={prefixError} context="prefix" />
-      ) : !access || tokenRejected ? (
-        <div className="mt-3">
-          {tokenRejected && access && (
-            <div
-              role="alert"
-              className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-500 bg-amber-100 px-3 py-2 text-sm text-amber-700"
-            >
-              <span className="flex items-center gap-2">
-                <LockClosedIcon className="size-4 shrink-0" />
-                {error?.message} Enter the token of{' '}
-                <strong className="font-mono font-medium">
-                  {access.account.username}
-                </strong>{' '}
-                again to continue
-              </span>
-              <Button size="xs" onClick={() => setAuthorizeDialogOpen(true)}>
-                Authorize
-              </Button>
+      <div className="mt-3">
+        {prefixError ? (
+          <ErrorDisplay error={prefixError} context="prefix" />
+        ) : !access || tokenRejected ? (
+          <>
+            {tokenRejected && access && (
+              <div
+                role="alert"
+                className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-500 bg-amber-100 px-3 py-2 text-sm text-amber-700"
+              >
+                <span className="flex items-center gap-2">
+                  <LockClosedIcon className="size-4 shrink-0" />
+                  {error?.message} Enter the token of{' '}
+                  <strong className="font-mono font-medium">
+                    {access.account.username}
+                  </strong>{' '}
+                  again to continue
+                </span>
+                <Button size="xs" onClick={() => setAuthorizeDialogOpen(true)}>
+                  Authorize
+                </Button>
+              </div>
+            )}
+            <div className="rounded-lg border border-line bg-white px-4 py-5 text-center shadow-xs">
+              <p className="text-sm italic text-muted">
+                Authorize with a Handle service account to see the handles of
+                this prefix
+              </p>
             </div>
-          )}
-          <div className="rounded-lg border border-line bg-white px-4 py-5 text-center shadow-xs">
-            <p className="text-sm italic text-muted">
-              Authorize with a Handle service account to see the handles of this
-              prefix
-            </p>
-          </div>
-        </div>
-      ) : (
-        <div className="mt-3">
-          {isLoading ? (
-            <div className="loading-container">
-              <LoadingSpinner size="md" />
-            </div>
-          ) : error ? (
-            <ErrorDisplay error={error} context="handles" />
-          ) : (
-            <>
-              <HandlesList
-                handles={handles}
-                prefixName={prefix?.name}
-                totalElements={totalElements}
-                searchTerm={searchQuery}
-                handlesPath={handlesPath}
-                onDelete={handleDelete}
-              />
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                totalElements={totalElements}
-                itemLabel="handles"
-                onPrev={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                onNext={() =>
-                  setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-                }
-              />
-            </>
-          )}
-        </div>
-      )}
+          </>
+        ) : (
+          <>
+            {isLoading ? (
+              <div className="loading-container">
+                <LoadingSpinner size="md" />
+              </div>
+            ) : error ? (
+              <ErrorDisplay error={error} context="handles" />
+            ) : (
+              <>
+                <HandlesList
+                  handles={handles}
+                  prefixName={prefix?.name}
+                  totalElements={totalElements}
+                  searchTerm={searchQuery}
+                  handlesPath={handlesPath}
+                  onDelete={handleDelete}
+                />
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  totalElements={totalElements}
+                  itemLabel="handles"
+                  onPrev={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                  onNext={() =>
+                    setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                  }
+                />
+              </>
+            )}
+          </>
+        )}
+      </div>
 
       {authorizeDialogOpen && (
         <AuthorizeDialog

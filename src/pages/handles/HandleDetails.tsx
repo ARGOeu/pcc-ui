@@ -45,32 +45,39 @@ const HandleDetails = () => {
 
   return (
     <div className="page-container">
-      <PageHeader
-        title="Handle details"
-        subtitle={
-          handle && (
-            <>
+      <div className="mb-2">
+        <PageHeader
+          title="Handle details"
+          navigateTo={{ label: 'Back to handles', to: handlesPath }}
+        >
+          {handle && (
+            <Button
+              variant="outline-primary"
+              href={`${handlesPath}/${encodeURIComponent(suffix)}/edit`}
+            >
+              Edit handle
+            </Button>
+          )}
+        </PageHeader>
+        {handle && (
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 text-base text-muted">
+            <p>
               Handle of prefix{' '}
               <strong className="font-mono">
                 {handle.handle.slice(0, handle.handle.indexOf('/'))}
               </strong>
-              {lastModified &&
-                `. Last modified ${formatDate({ value: lastModified, includeTime: true })}.`}
-            </>
-          )
-        }
-        navigateTo={{ label: 'Back to handles', to: handlesPath }}
-        className="mb-6"
-      >
-        {handle && (
-          <Button
-            variant="outline-primary"
-            href={`${handlesPath}/${encodeURIComponent(suffix)}/edit`}
-          >
-            Edit handle
-          </Button>
+            </p>
+            {lastModified && (
+              <p>
+                Last modified on:{' '}
+                <span className="font-semibold">
+                  {formatDate({ value: lastModified, includeTime: true })}
+                </span>
+              </p>
+            )}
+          </div>
         )}
-      </PageHeader>
+      </div>
 
       {!access || isTokenRejected(error) ? (
         <AuthorizePrompt
@@ -88,7 +95,7 @@ const HandleDetails = () => {
         <>
           <section
             aria-label="Handle and target URL"
-            className="flex flex-wrap items-center gap-x-12 gap-y-4 rounded-lg border border-line bg-surface-muted px-6 py-4"
+            className="flex flex-wrap items-center gap-x-12 gap-y-4 rounded-lg border border-line bg-surface-muted px-6 py-3"
           >
             <div className="min-w-0 flex-[1_1_17.5rem]">
               <p className={heroLabelClass}>Handle</p>
@@ -126,8 +133,8 @@ const HandleDetails = () => {
             </div>
           </section>
 
-          <section className="mt-7">
-            <h2 className="section-title mb-3 flex items-center gap-2">
+          <section className="mt-6">
+            <h2 className="section-title mb-2 flex items-center gap-2">
               Custom fields
               {customFields.length > 0 && (
                 <span className="rounded-full bg-surface-strong px-2 py-0.5 text-xs font-medium text-muted">
@@ -141,7 +148,7 @@ const HandleDetails = () => {
                   {customFields.map((field) => (
                     <div
                       key={field.index}
-                      className="grid grid-cols-[minmax(7.5rem,13.75rem)_minmax(0,1fr)] gap-4 px-5 py-3"
+                      className="grid grid-cols-[minmax(7.5rem,13.75rem)_minmax(0,1fr)] gap-12 px-5 py-2"
                     >
                       <dt className="break-all font-mono text-sm text-muted">
                         {field.key}
@@ -154,7 +161,7 @@ const HandleDetails = () => {
                 </dl>
               ) : (
                 <p className="px-5 py-4 text-sm text-muted">
-                  This handle has no custom fields.
+                  This handle has no custom fields
                 </p>
               )}
             </div>
