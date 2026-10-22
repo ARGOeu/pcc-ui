@@ -20,6 +20,8 @@ import CreateHandle from '@/pages/handles/CreateHandle'
 import HandleDetails from '@/pages/handles/HandleDetails'
 import HandlesEntry from '@/pages/handles/HandlesEntry'
 import CreateAccount from '@/pages/prefixes/CreateAccount'
+import Providers from '@/pages/providers/Providers'
+import CreateProvider from '@/pages/providers/CreateProvider'
 import MyInvitations from '@/pages/MyInvitations'
 import InvitationReview from '@/pages/InvitationReview'
 import { AuthProvider } from '@/auth/AuthProvider'
@@ -105,12 +107,18 @@ const App = () => {
                   element={<HandleDetails />}
                 />
                 <Route
-                  path="providers/:providerId/prefixes/:id/handles/create"
+                  path="providers/:providerId/prefixes/:id/create-handle"
                   element={<CreateHandle />}
                 />
                 <Route
                   path="providers/:providerId/prefixes/:id/handles/:suffix/edit"
                   element={<CreateHandle />}
+                />
+                <Route path="providers" element={<Providers />} />
+                <Route path="providers/add" element={<CreateProvider />} />
+                <Route
+                  path="providers/:providerId/edit"
+                  element={<CreateProvider />}
                 />
                 <Route path="my-invitations" element={<MyInvitations />} />
                 <Route path="endpoints-access" element={<EndpointsAccess />} />

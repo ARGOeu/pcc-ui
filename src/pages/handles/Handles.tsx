@@ -151,7 +151,11 @@ const HandlesView = ({ providerId, prefixId }: HandlesViewProps) => {
       >
         {hasPrefixSelected &&
           (access ? (
-            <Button href={`${handlesPath}/create`}>Create handle</Button>
+            <Button
+              href={`/providers/${providerId}/prefixes/${prefixId}/create-handle`}
+            >
+              Create handle
+            </Button>
           ) : (
             <Button
               variant="outline-primary"

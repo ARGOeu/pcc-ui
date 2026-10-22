@@ -28,3 +28,24 @@ export const fetchCodelist = async (
 
   return (await response.json()) as CodelistItem[]
 }
+
+export const fetchContactTypes = async (token: string): Promise<string[]> => {
+  const response = await fetch(`${BACKEND_API}/api/v1/codelist/contact-types`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!response.ok) {
+    const errorData = (await response.json().catch(() => ({}))) as {
+      message?: string
+    }
+    throw new Error(
+      errorData.message ?? `HTTP error! status: ${response.status}`,
+    )
+  }
+
+  return (await response.json()) as string[]
+}
