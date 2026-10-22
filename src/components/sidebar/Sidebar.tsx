@@ -45,7 +45,13 @@ const Sidebar = ({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) => {
           <SidebarNavItem
             to="/handles"
             label="Handles"
-            active={/\/handles(\/|$)/.test(pathname)}
+            active={/\/(handles(\/|$)|create-handle$)/.test(pathname)}
+            onClick={onCloseMobileMenu}
+          />
+          <SidebarNavItem
+            to="/providers"
+            label="Providers"
+            active={/^\/providers(\/add|\/\d+\/edit)?\/?$/.test(pathname)}
             onClick={onCloseMobileMenu}
           />
           <div>

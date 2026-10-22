@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@/auth/useAuth'
-import { fetchCodelist } from '@/api/codelist'
+import { fetchCodelist, fetchContactTypes } from '@/api/codelist'
 import type { CodelistItem } from '@/types/codelist'
 
 export const useGetContractTypes = (enabled = true) => {
@@ -29,6 +29,22 @@ export const useGetLookupServiceTypes = (enabled = true) => {
         throw new Error('No authentication token available')
       }
       return fetchCodelist('lookup_service_type', token)
+    },
+    retry: false,
+    enabled: enabled && !!token,
+  })
+}
+
+export const useGetContactTypes = (enabled = true) => {
+  const { token } = useAuth()
+
+  return useQuery<string[], Error>({
+    queryKey: ['codelist', 'contact-types'],
+    queryFn: () => {
+      if (!token) {
+        throw new Error('No authentication token available')
+      }
+      return fetchContactTypes(token)
     },
     retry: false,
     enabled: enabled && !!token,
