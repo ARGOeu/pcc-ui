@@ -15,9 +15,16 @@ const getOptionValue = (prefix: Prefix) => `${prefix.provider_id}/${prefix.id}`
 interface PrefixSwitcherProps {
   providerId: number
   prefixId: number
+  hasSelection: boolean
+  onHasSelectionChange: (hasSelection: boolean) => void
 }
 
-const PrefixSwitcher = ({ providerId, prefixId }: PrefixSwitcherProps) => {
+const PrefixSwitcher = ({
+  providerId,
+  prefixId,
+  hasSelection,
+  onHasSelectionChange,
+}: PrefixSwitcherProps) => {
   const navigate = useNavigate()
   const [searchInput, setSearchInput] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
@@ -78,8 +85,16 @@ const PrefixSwitcher = ({ providerId, prefixId }: PrefixSwitcherProps) => {
     }
   }
 
+  const handleProviderChange = (value: string) => {
+    setProviderFilter(value)
+    if (value !== allProviders) {
+      onHasSelectionChange(value === String(providerId))
+    }
+  }
+
   const handleChange = (value: string) => {
     const [selectedProviderId, selectedPrefixId] = value.split('/')
+    onHasSelectionChange(true)
     void navigate(
       `/providers/${selectedProviderId}/prefixes/${selectedPrefixId}/handles`,
     )
@@ -94,7 +109,7 @@ const PrefixSwitcher = ({ providerId, prefixId }: PrefixSwitcherProps) => {
           </label>
           <SelectDropdown
             value={providerFilter}
-            onChange={setProviderFilter}
+            onChange={handleProviderChange}
             options={providerOptions}
             placeholder="Select a provider..."
           />
@@ -105,10 +120,14 @@ const PrefixSwitcher = ({ providerId, prefixId }: PrefixSwitcherProps) => {
           Select a prefix:
         </label>
         <SelectDropdown
-          value={`${providerId}/${prefixId}`}
+          value={hasSelection ? `${providerId}/${prefixId}` : ''}
           onChange={handleChange}
           options={options}
-          selectedLabel={currentPrefix && getOptionLabel(currentPrefix)}
+          selectedLabel={
+            hasSelection
+              ? currentPrefix && getOptionLabel(currentPrefix)
+              : undefined
+          }
           placeholder="Select a prefix..."
           searchable
           listSize="lg"

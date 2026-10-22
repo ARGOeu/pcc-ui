@@ -35,7 +35,7 @@ import type { FormEvent } from 'react'
 const labelClass = 'text-base font-medium text-body'
 const inputErrorClass =
   'border-red-500! focus:border-red-500! focus:ring-red-500/10!'
-const errorTextClass = 'text-xs text-red-500 mt-1'
+const errorTextClass = 'text-xs text-red-500'
 
 interface FormData {
   suffix: string
@@ -125,9 +125,12 @@ const CreateHandle = () => {
     }
   }, [handle])
 
+  const hasUrl = formData.url.trim() !== ''
+  const hasValues = hasUrl || fields.length > 0
   const isFormValid =
     (isEditMode || !validateSuffix(formData.suffix)) &&
     !validateUrl(formData.url) &&
+    hasValues &&
     fields.every(
       (row) => !validateFieldKey(row.key) && !validateFieldValue(row.value),
     )
@@ -172,7 +175,7 @@ const CreateHandle = () => {
       return
     }
     const values = [
-      { type: urlValueType, value: formData.url.trim() },
+      ...(hasUrl ? [{ type: urlValueType, value: formData.url.trim() }] : []),
       ...fields.map((row) => ({
         type: row.key.trim(),
         value: row.value.trim(),
@@ -208,11 +211,11 @@ const CreateHandle = () => {
         },
         {
           onSuccess: () => {
-            toast.success('Handle added successfully!')
+            toast.success('Handle created successfully!')
             void navigate(handlesPath)
           },
           onError: (error) => {
-            toast.error(`Failed to add handle: ${error.message}`)
+            toast.error(`Failed to create handle: ${error.message}`)
           },
         },
       )
@@ -222,7 +225,7 @@ const CreateHandle = () => {
   return (
     <div className="page-container">
       <PageHeader
-        title={isEditMode ? 'Edit handle' : 'Add handle'}
+        title={isEditMode ? 'Edit handle' : 'Create handle'}
         subtitle={
           isEditMode ? (
             <>
@@ -231,9 +234,9 @@ const CreateHandle = () => {
             </>
           ) : (
             <>
-              Add a handle to prefix
+              Create a handle in prefix{' '}
               {prefix?.name && (
-                <strong className="font-mono"> {prefix.name}</strong>
+                <strong className="font-mono">{prefix.name}</strong>
               )}
             </>
           )
@@ -281,18 +284,18 @@ const CreateHandle = () => {
                   {isSaving ? (
                     <>
                       <LoadingSpinner size="xs" className="text-white!" />
-                      {isEditMode ? 'Saving...' : 'Adding...'}
+                      {isEditMode ? 'Saving...' : 'Creating...'}
                     </>
                   ) : isEditMode ? (
                     'Save changes'
                   ) : (
-                    'Add handle'
+                    'Create handle'
                   )}
                 </Button>
               </div>
             }
           >
-            <div className="flex flex-col gap-2 px-6 py-4">
+            <div className="flex flex-col gap-2 px-6 py-3">
               <div className="flex flex-col">
                 <div className="flex items-baseline justify-between gap-3">
                   <label className={`${labelClass} mb-0.5`}>
@@ -325,7 +328,9 @@ const CreateHandle = () => {
                   />
                 </div>
                 {errors.suffix ? (
-                  <span className={errorTextClass}>{errors.suffix}</span>
+                  <span className={`${errorTextClass} mt-1`}>
+                    {errors.suffix}
+                  </span>
                 ) : (
                   <span className="text-xs text-muted mt-1">
                     Will resolve to:{' '}
@@ -335,9 +340,7 @@ const CreateHandle = () => {
               </div>
 
               <div className="flex flex-col">
-                <label className={`${labelClass} mb-0.5`}>
-                  Target URL <span className="required">*</span>
-                </label>
+                <label className={`${labelClass} mb-0.5`}>Target URL</label>
                 <div className="flex items-stretch gap-2">
                   <input
                     type="text"
@@ -352,7 +355,9 @@ const CreateHandle = () => {
                     size="sm"
                     onClick={handleVerify}
                     disabled={
-                      !!validateUrl(formData.url) || verifyMutation.isPending
+                      !hasUrl ||
+                      !!validateUrl(formData.url) ||
+                      verifyMutation.isPending
                     }
                   >
                     {verifyMutation.isPending ? (
@@ -366,7 +371,7 @@ const CreateHandle = () => {
                   </Button>
                 </div>
                 {errors.url ? (
-                  <span className={errorTextClass}>{errors.url}</span>
+                  <span className={`${errorTextClass} mt-1`}>{errors.url}</span>
                 ) : verifyMutation.data?.reachable ? (
                   <span className="mt-1 text-xs text-emerald-700">
                     The URL is reachable
@@ -379,6 +384,10 @@ const CreateHandle = () => {
                   <span className="mt-1 text-xs text-red-600">
                     The URL could not be checked now. You can still save the
                     handle
+                  </span>
+                ) : !hasValues ? (
+                  <span className="mt-1 text-xs text-muted">
+                    Add a target URL or at least one custom field
                   </span>
                 ) : null}
               </div>

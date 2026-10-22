@@ -105,7 +105,7 @@ const App = () => {
                   element={<HandleDetails />}
                 />
                 <Route
-                  path="providers/:providerId/prefixes/:id/handles/add"
+                  path="providers/:providerId/prefixes/:id/handles/create"
                   element={<CreateHandle />}
                 />
                 <Route

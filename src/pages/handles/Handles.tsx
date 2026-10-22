@@ -35,6 +35,7 @@ const HandlesView = ({ providerId, prefixId }: HandlesViewProps) => {
   const [authorizeDialogOpen, setAuthorizeDialogOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [handleToDelete, setHandleToDelete] = useState<string | null>(null)
+  const [hasPrefixSelected, setHasPrefixSelected] = useState(true)
   const handlesPath = `/providers/${providerId}/prefixes/${prefixId}/handles`
 
   const { access, setAccess, clearAccess } = useHandleAccess(prefixId)
@@ -57,7 +58,8 @@ const HandlesView = ({ providerId, prefixId }: HandlesViewProps) => {
   const totalPages = data?.total_pages ?? 0
   const totalElements = data?.total_elements ?? 0
   const tokenRejected = isTokenRejected(error)
-  const showHandles = !!access && !tokenRejected && !prefixError
+  const showHandles =
+    !!access && !tokenRejected && !prefixError && hasPrefixSelected
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -147,16 +149,17 @@ const HandlesView = ({ providerId, prefixId }: HandlesViewProps) => {
         subtitle="The handles of the selected prefix"
         className="mb-2"
       >
-        {access ? (
-          <Button href={`${handlesPath}/add`}>Add handle</Button>
-        ) : (
-          <Button
-            variant="outline-primary"
-            onClick={() => setAuthorizeDialogOpen(true)}
-          >
-            Authorize
-          </Button>
-        )}
+        {hasPrefixSelected &&
+          (access ? (
+            <Button href={`${handlesPath}/create`}>Create handle</Button>
+          ) : (
+            <Button
+              variant="outline-primary"
+              onClick={() => setAuthorizeDialogOpen(true)}
+            >
+              Authorize
+            </Button>
+          ))}
       </PageHeader>
 
       {showHandles && access && (
@@ -169,7 +172,12 @@ const HandlesView = ({ providerId, prefixId }: HandlesViewProps) => {
       )}
 
       <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-3">
-        <PrefixSwitcher providerId={providerId} prefixId={prefixId} />
+        <PrefixSwitcher
+          providerId={providerId}
+          prefixId={prefixId}
+          hasSelection={hasPrefixSelected}
+          onHasSelectionChange={setHasPrefixSelected}
+        />
         {showHandles && (
           <SearchInput
             value={searchInput}
@@ -182,7 +190,13 @@ const HandlesView = ({ providerId, prefixId }: HandlesViewProps) => {
         )}
       </div>
       <div className="mt-3">
-        {prefixError ? (
+        {!hasPrefixSelected ? (
+          <div className="rounded-lg border border-line bg-white px-4 py-5 text-center shadow-xs">
+            <p className="text-sm italic text-muted">
+              Select a prefix to see its handles
+            </p>
+          </div>
+        ) : prefixError ? (
           <ErrorDisplay error={prefixError} context="prefix" />
         ) : !access || tokenRejected ? (
           <>
