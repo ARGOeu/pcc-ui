@@ -26,7 +26,7 @@ export const validateSuffix = (value: string): string => {
 export const validateUrl = (value: string): string => {
   const trimmed = value.trim()
   if (!trimmed) {
-    return 'Target URL is required'
+    return ''
   }
   return isValidUrl(trimmed)
     ? ''
