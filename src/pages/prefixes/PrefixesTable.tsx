@@ -9,6 +9,8 @@ import IconButton from '@/components/IconButton'
 import DataTable, { thBase, tdBase } from '@/components/DataTable'
 import capitalizeWord from '@/utils/capitalizeWord'
 import type { Prefix } from '@/types/prefixes'
+const actionButtonClass = 'text-muted hover:bg-surface-strong p-1!'
+const deleteButtonClass = 'text-red-600 hover:bg-red-50 p-1!'
 
 interface PrefixesTableProps {
   prefixes: Prefix[]
@@ -65,31 +67,31 @@ const PrefixesTable = ({
                   icon={<Bars3Icon className="size-4 md:size-5" />}
                   label="View prefix"
                   href={`/providers/${prefix.provider_id}/prefixes/${prefix.id}/details`}
-                  className="text-muted hover:bg-surface-strong p-1!"
+                  className={actionButtonClass}
                 />
                 <IconButton
                   icon={<PencilSquareIcon className="size-4 md:size-5" />}
                   label="Edit prefix"
                   href={`/providers/${prefix.provider_id}/prefixes/${prefix.id}/edit`}
-                  className="text-muted hover:bg-surface-strong p-1!"
+                  className={actionButtonClass}
                 />
                 <IconButton
                   icon={<LinkIcon className="size-4 md:size-5" />}
                   label="Manage handles"
                   href={`/providers/${prefix.provider_id}/prefixes/${prefix.id}/handles`}
-                  className="text-muted hover:bg-surface-strong p-1!"
+                  className={actionButtonClass}
                 />
                 <IconButton
                   icon={<UserCog className="size-4 md:size-5" />}
                   label="Manage accounts"
                   href={`/providers/${prefix.provider_id}/prefixes/${prefix.id}/accounts`}
-                  className="text-muted hover:bg-surface-strong p-1!"
+                  className={`${actionButtonClass} tooltip-end`}
                 />
                 <IconButton
                   icon={<TrashIcon className="size-4 md:size-5" />}
                   label="Delete prefix"
                   onClick={() => onDelete(prefix)}
-                  className="text-red-600 hover:bg-red-50 p-1!"
+                  className={`${deleteButtonClass} tooltip-end`}
                 />
               </div>
             </td>
