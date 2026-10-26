@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { useAuth } from '@/auth/useAuth'
 import {
   createPrefix,
@@ -71,6 +76,50 @@ export const useGetPrefixes = (
   })
 }
 
+export const useGetProviderPrefixes = (
+  providerId: number,
+  size = 10,
+  search?: string,
+  provider?: string,
+  enabled = true,
+) => {
+  const { token } = useAuth()
+
+  return useInfiniteQuery({
+    queryKey: ['prefixes', 'pages', providerId, size, provider, search],
+    queryFn: ({ pageParam }) => {
+      if (!token) {
+        throw new Error('No authentication token available')
+      }
+      if (!providerId) {
+        throw new Error('Provider ID is required')
+      }
+      return fetchPrefixes(
+        providerId,
+        token,
+        pageParam,
+        size,
+        undefined,
+        provider,
+        undefined,
+        search,
+      )
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: PrefixesResponse) =>
+      lastPage.number_of_page < lastPage.total_pages
+        ? lastPage.number_of_page + 1
+        : undefined,
+    placeholderData: (previousData, previousQuery) =>
+      previousQuery?.queryKey[2] === providerId &&
+      previousQuery.queryKey[4] === provider
+        ? previousData
+        : undefined,
+    retry: false,
+    enabled: enabled && !!token && !!providerId,
+  })
+}
+
 export const useGetPrefix = (
   providerId: number,
   id: number,
@@ -124,6 +173,7 @@ export const useCreatePrefixMutation = () => {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['prefixes'] })
       void queryClient.invalidateQueries({ queryKey: ['admin-prefixes'] })
+      void queryClient.invalidateQueries({ queryKey: ['statistics'] })
     },
     onError: (error) => {
       console.error('Prefix create error:', error)
@@ -166,6 +216,7 @@ export const useUpdatePrefixMutation = () => {
       void queryClient.invalidateQueries({
         queryKey: ['prefix', providerId, id],
       })
+      void queryClient.invalidateQueries({ queryKey: ['statistics'] })
     },
     onError: (error) => {
       console.error('Prefix update error:', error)
@@ -208,6 +259,7 @@ export const usePatchPrefixMutation = () => {
       void queryClient.invalidateQueries({
         queryKey: ['prefix', providerId, id],
       })
+      void queryClient.invalidateQueries({ queryKey: ['statistics'] })
     },
     onError: (error) => {
       console.error('Prefix patch error:', error)
@@ -235,6 +287,7 @@ export const useDeletePrefixMutation = () => {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['prefixes'] })
       void queryClient.invalidateQueries({ queryKey: ['admin-prefixes'] })
+      void queryClient.invalidateQueries({ queryKey: ['statistics'] })
     },
     onError: (error) => {
       console.error('Prefix delete error:', error)

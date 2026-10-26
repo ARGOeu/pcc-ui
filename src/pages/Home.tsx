@@ -1,7 +1,18 @@
 import { useGetUserProfile } from '@/hooks/useProfile'
+import { useAuth } from '@/auth/useAuth'
+import { Navigate } from 'react-router-dom'
 
 const Home = () => {
   const { data: profile } = useGetUserProfile()
+  const { rolesReady, isSuperAdmin, isProviderAdmin } = useAuth()
+
+  if (!rolesReady) {
+    return null
+  }
+
+  if (isSuperAdmin || isProviderAdmin) {
+    return <Navigate to="/dashboard" replace />
+  }
 
   return (
     <div className="page-container">

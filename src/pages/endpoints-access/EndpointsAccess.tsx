@@ -6,6 +6,7 @@ import {
   useGetRoleAssignedEndpoints,
   useGetSecuredEndpoints,
 } from '@/hooks/useSecuredEndpoints'
+import { MEMBERS_ROLE } from '@/auth/roles'
 import { toast } from 'sonner'
 import PageHeader from '@/components/PageHeader'
 import LoadingSpinner from '@/components/LoadingSpinner'
@@ -38,7 +39,7 @@ const EndpointsAccess = () => {
     isLoading: isLoadingRoles,
     error: rolesError,
   } = useGetRoles()
-  const roles = rolesData?.filter((role) => role.name !== 'members')
+  const roles = rolesData?.filter((role) => role.name !== MEMBERS_ROLE)
   const effectiveSelectedRoleId = selectedRoleId ?? roles?.[0]?.id ?? null
   const {
     data: securedEndpoints,

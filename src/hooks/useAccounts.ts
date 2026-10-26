@@ -109,6 +109,7 @@ export const useCreateAccountMutation = () => {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['accounts'] })
+      void queryClient.invalidateQueries({ queryKey: ['statistics'] })
     },
     onError: (error) => {
       console.error('Account create error:', error)
@@ -201,6 +202,7 @@ export const useDeleteAccountMutation = () => {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['accounts'] })
+      void queryClient.invalidateQueries({ queryKey: ['statistics'] })
     },
     onError: (error) => {
       console.error('Account delete error:', error)

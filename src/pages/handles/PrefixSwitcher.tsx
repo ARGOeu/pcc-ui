@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useGetAllPrefixes } from '@/hooks/useAdmin'
-import { useGetPrefix } from '@/hooks/usePrefixes'
+import { useGetPrefix, useGetProviderPrefixes } from '@/hooks/usePrefixes'
 import { useGetProviders } from '@/hooks/useProviders'
+import { useAuth } from '@/auth/useAuth'
 import { useNavigate } from 'react-router-dom'
 import SelectDropdown from '@/components/SelectDropdown'
 import type { SelectOption } from '@/components/SelectDropdown'
@@ -26,6 +27,7 @@ const PrefixSwitcher = ({
   onHasSelectionChange,
 }: PrefixSwitcherProps) => {
   const navigate = useNavigate()
+  const { isSuperAdmin, rolesReady } = useAuth()
   const [searchInput, setSearchInput] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
   const [providerFilter, setProviderFilter] = useState(String(providerId))
@@ -39,18 +41,27 @@ const PrefixSwitcher = ({
         ?.name
     : undefined
 
+  const canLoadList = rolesReady && (!!providers || !!providersError)
+  const adminPrefixes = useGetAllPrefixes(
+    pageSize,
+    searchQuery || undefined,
+    providerName,
+    canLoadList && isSuperAdmin,
+  )
+  const providerPrefixes = useGetProviderPrefixes(
+    providerFilter === allProviders ? providerId : Number(providerFilter),
+    pageSize,
+    searchQuery || undefined,
+    providerName,
+    canLoadList && !isSuperAdmin,
+  )
   const {
     data: prefixes,
     isLoading,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useGetAllPrefixes(
-    pageSize,
-    searchQuery || undefined,
-    providerName,
-    !!providers || !!providersError,
-  )
+  } = isSuperAdmin ? adminPrefixes : providerPrefixes
 
   useEffect(() => {
     const timer = setTimeout(() => setSearchQuery(searchInput), 500)
@@ -64,7 +75,7 @@ const PrefixSwitcher = ({
       : prefix.name
 
   const providerOptions: SelectOption[] = [
-    { value: allProviders, label: 'All providers' },
+    ...(isSuperAdmin ? [{ value: allProviders, label: 'All providers' }] : []),
     ...(providers?.map((provider) => ({
       value: String(provider.id),
       label: provider.name,
@@ -134,7 +145,7 @@ const PrefixSwitcher = ({
           onSearchChange={setSearchInput}
           onScrollEnd={handleScrollEnd}
           footer={
-            isLoading
+            isLoading || !rolesReady
               ? 'Loading prefixes...'
               : isFetchingNextPage
                 ? 'Loading more prefixes...'

@@ -5,6 +5,7 @@ import { useGetAdminPrefixes } from '@/hooks/useAdmin'
 import { useGetProviders } from '@/hooks/useProviders'
 import { useGetDomains } from '@/hooks/useDomains'
 import { useGetContractTypes } from '@/hooks/useCodelist'
+import { useAuth } from '@/auth/useAuth'
 import { toast } from 'sonner'
 import PageHeader from '@/components/PageHeader'
 import Button from '@/components/Button'
@@ -25,6 +26,7 @@ const allTabId = 'all'
 const Prefixes = () => {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
+  const { isSuperAdmin, rolesReady } = useAuth()
 
   const [domainFilter, setDomainFilter] = useState('')
   const [contractTypeFilter, setContractTypeFilter] = useState('')
@@ -40,10 +42,10 @@ const Prefixes = () => {
     error: providersError,
   } = useGetProviders()
   const providerParam = Number(searchParams.get('provider'))
-  const activeProvider = providers?.find(
-    (provider) => provider.id === providerParam,
-  )
-  const isAllActive = !activeProvider
+  const activeProvider =
+    providers?.find((provider) => provider.id === providerParam) ??
+    (isSuperAdmin ? undefined : providers?.[0])
+  const isAllActive = isSuperAdmin && !activeProvider
   const createProvider = activeProvider ?? providers?.[0]
   const providerPrefixes = useGetPrefixes(
     activeProvider?.id ?? 0,
@@ -53,7 +55,7 @@ const Prefixes = () => {
     activeProvider?.name,
     contractTypeFilter || undefined,
     searchQuery || undefined,
-    !!activeProvider,
+    !!activeProvider && rolesReady,
   )
   const allPrefixes = useGetAdminPrefixes(
     currentPage,
@@ -143,7 +145,7 @@ const Prefixes = () => {
     : 'No prefixes found'
 
   const providerTabs = [
-    { id: allTabId, label: 'All' },
+    ...(isSuperAdmin ? [{ id: allTabId, label: 'All' }] : []),
     ...(providers?.map((provider) => ({
       id: String(provider.id),
       label: provider.name,
@@ -202,7 +204,7 @@ const Prefixes = () => {
           Create prefix
         </Button>
       </PageHeader>
-      {isLoadingProviders ? (
+      {isLoadingProviders || !rolesReady ? (
         <div className="loading-container">
           <LoadingSpinner size="md" />
         </div>

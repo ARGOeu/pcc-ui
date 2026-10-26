@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useGetAdminPrefixes } from '@/hooks/useAdmin'
-import { useGetPrefix } from '@/hooks/usePrefixes'
+import { useGetPrefix, useGetPrefixes } from '@/hooks/usePrefixes'
+import { useGetProviders } from '@/hooks/useProviders'
+import { useAuth } from '@/auth/useAuth'
 import { Navigate } from 'react-router-dom'
 import PageHeader from '@/components/PageHeader'
 import LoadingSpinner from '@/components/LoadingSpinner'
@@ -12,6 +14,7 @@ import {
 
 const HandlesEntry = () => {
   const [lastPrefix] = useState(getLastHandlesPrefix)
+  const { isSuperAdmin, rolesReady } = useAuth()
 
   const {
     data: savedPrefix,
@@ -23,14 +26,40 @@ const HandlesEntry = () => {
     !!lastPrefix,
   )
   const useFirstPrefix = !lastPrefix || !!savedError
-  const { data, isLoading, error } = useGetAdminPrefixes(
+
+  const {
+    data: adminPrefixes,
+    isLoading: isLoadingAdmin,
+    error: adminError,
+  } = useGetAdminPrefixes(
     1,
     1,
     undefined,
     undefined,
     undefined,
     undefined,
-    useFirstPrefix,
+    useFirstPrefix && rolesReady && isSuperAdmin,
+  )
+  const {
+    data: providers,
+    isLoading: isLoadingProviders,
+    error: providersError,
+  } = useGetProviders(useFirstPrefix && rolesReady && !isSuperAdmin)
+  const firstProvider = providers?.[0]
+
+  const {
+    data: providerPrefixes,
+    isLoading: isLoadingProviderPrefixes,
+    error: providerPrefixesError,
+  } = useGetPrefixes(
+    firstProvider?.id ?? 0,
+    1,
+    1,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    !!firstProvider,
   )
 
   // A saved prefix that no longer exists is forgotten.
@@ -40,7 +69,8 @@ const HandlesEntry = () => {
     }
   }, [savedError])
 
-  const firstPrefix = data?.content[0]
+  const firstPrefix = (isSuperAdmin ? adminPrefixes : providerPrefixes)
+    ?.content[0]
   const target =
     savedPrefix && lastPrefix
       ? lastPrefix
@@ -58,11 +88,20 @@ const HandlesEntry = () => {
     )
   }
 
+  const error = isSuperAdmin
+    ? adminError
+    : (providersError ?? providerPrefixesError)
+
   return (
     <div className="page-container">
       <PageHeader title="Handles" className="mb-4" />
 
-      {isLoadingSaved || (useFirstPrefix && isLoading) ? (
+      {isLoadingSaved ||
+      (useFirstPrefix &&
+        (!rolesReady ||
+          isLoadingAdmin ||
+          isLoadingProviders ||
+          isLoadingProviderPrefixes)) ? (
         <div className="loading-container">
           <LoadingSpinner size="md" />
         </div>

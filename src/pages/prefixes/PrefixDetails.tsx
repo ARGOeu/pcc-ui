@@ -3,10 +3,10 @@ import { useGetPrefix, useGetPrefixStatistics } from '@/hooks/usePrefixes'
 import PageHeader from '@/components/PageHeader'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
+import StatCard from '@/components/StatCard'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import ErrorDisplay from '@/components/ErrorDisplay'
 import capitalizeWord from '@/utils/capitalizeWord'
-import type { ReactNode } from 'react'
 
 interface DetailFieldProps {
   label: string
@@ -20,25 +20,6 @@ const DetailField = ({ label, value }: DetailFieldProps) => (
       {value ?? '—'}
     </span>
   </div>
-)
-
-interface StatCardProps {
-  label: string
-  value: ReactNode
-  valueClassName?: string
-  caption?: string
-}
-
-const StatCard = ({ label, value, valueClassName, caption }: StatCardProps) => (
-  <Card className="px-3 py-2">
-    <div className="text-sm text-muted mb-0.5">{label}</div>
-    <div
-      className={`text-2xl font-semibold ${valueClassName ?? 'text-foreground'}`}
-    >
-      {value}
-    </div>
-    {caption && <div className="text-xs text-muted">{caption}</div>}
-  </Card>
 )
 
 const PrefixDetails = () => {
