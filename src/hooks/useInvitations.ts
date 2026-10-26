@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '@/auth/useAuth'
+import { PREFIX_RESOURCE } from '@/auth/roles'
 import {
   createPrefixInvitation,
   fetchPrefixInvitation,
@@ -71,7 +72,7 @@ export const useRespondToInvitationMutation = () => {
         invitation.id,
         {
           action,
-          api_resource: 'Prefix',
+          api_resource: PREFIX_RESOURCE,
           resource_id: Number(invitation.prefix_id),
           role: invitation.role,
         },

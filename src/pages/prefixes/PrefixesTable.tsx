@@ -62,7 +62,7 @@ const PrefixesTable = ({
             </td>
             <td className={tdBase}>{prefix.contract_end?.split('T')[0]}</td>
             <td className={`${tdBase} whitespace-nowrap`}>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1">
                 <IconButton
                   icon={<Bars3Icon className="size-4 md:size-5" />}
                   label="View prefix"

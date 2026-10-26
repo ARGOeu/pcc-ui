@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { AuthContext } from './context'
 import { keycloak, initKeycloak } from './keycloak'
 import { onSessionExpired } from './authEvents'
 import { registerUser } from '@/api/profile'
+import { userProfileQueryOptions } from '@/hooks/useProfile'
+import getUserRoles from '@/utils/getUserRoles'
 import type { ReactNode } from 'react'
 
 interface AuthProviderProps {
@@ -14,6 +17,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [authenticated, setAuthenticated] = useState(false)
   const [registered, setRegistered] = useState(false)
   const [token, setToken] = useState<string | undefined>(undefined)
+
+  const { data: profile, isPending: isPendingProfile } = useQuery(
+    userProfileQueryOptions(token),
+  )
+  const { roles, isSuperAdmin, isProviderAdmin } = getUserRoles(profile)
 
   const startedRef = useRef(false)
   const refreshTimerRef = useRef<number | null>(null)
@@ -114,6 +122,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         authenticated,
         registered,
         token,
+        rolesReady: !isPendingProfile,
+        roles,
+        isSuperAdmin,
+        isProviderAdmin,
         login,
         logout,
       }}

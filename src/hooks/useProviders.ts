@@ -57,6 +57,7 @@ export const useCreateProviderMutation = () => {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['providers'] })
+      void queryClient.invalidateQueries({ queryKey: ['statistics'] })
     },
     onError: (error) => {
       console.error('Provider create error:', error)
@@ -106,6 +107,7 @@ export const useDeleteProviderMutation = () => {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['providers'] })
+      void queryClient.invalidateQueries({ queryKey: ['statistics'] })
     },
     onError: (error) => {
       console.error('Provider delete error:', error)

@@ -14,7 +14,7 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) => {
-  const { authenticated, logout } = useAuth()
+  const { authenticated, logout, isSuperAdmin, isProviderAdmin } = useAuth()
   const { pathname } = useLocation()
   const { data: profile } = useGetUserProfile()
   const { data: invitations } = useGetUserInvitations(1, 100, authenticated, {
@@ -36,7 +36,14 @@ const Sidebar = ({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) => {
       <SidebarHeader onCloseMobileMenu={onCloseMobileMenu} />
 
       {authenticated ? (
-        <nav className="flex flex-1 flex-col gap-1 p-4">
+        <nav className="flex flex-1 flex-col gap-0.5 p-4">
+          {(isSuperAdmin || isProviderAdmin) && (
+            <SidebarNavItem
+              to="/dashboard"
+              label="Dashboard"
+              onClick={onCloseMobileMenu}
+            />
+          )}
           <SidebarNavItem
             to="/prefixes"
             label="Prefixes"
@@ -63,14 +70,16 @@ const Sidebar = ({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) => {
               onClick={onCloseMobileMenu}
             />
           </div>
-          <div>
-            <SidebarSectionLabel>Admin</SidebarSectionLabel>
-            <SidebarNavItem
-              to="/endpoints-access"
-              label="Endpoints access"
-              onClick={onCloseMobileMenu}
-            />
-          </div>
+          {isSuperAdmin && (
+            <div>
+              <SidebarSectionLabel>Admin</SidebarSectionLabel>
+              <SidebarNavItem
+                to="/endpoints-access"
+                label="Endpoints access"
+                onClick={onCloseMobileMenu}
+              />
+            </div>
+          )}
         </nav>
       ) : (
         <div className="flex-1 flex items-start justify-center px-6 pt-20">

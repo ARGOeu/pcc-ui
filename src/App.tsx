@@ -8,6 +8,7 @@ import {
 import { Toaster, toast } from 'sonner'
 import Layout from '@/Layout'
 import Home from '@/pages/Home'
+import Dashboard from '@/pages/dashboard/Dashboard'
 import NotFound from '@/pages/NotFound'
 import Prefixes from '@/pages/prefixes/Prefixes'
 import CreatePrefix from '@/pages/prefixes/CreatePrefix'
@@ -68,6 +69,7 @@ const App = () => {
               <Route path="invitation/:id" element={<InvitationReview />} />
               <Route element={<Layout />}>
                 <Route index element={<Home />} />
+                <Route path="dashboard" element={<Dashboard />} />
                 <Route path="prefixes" element={<Prefixes />} />
                 <Route
                   path="providers/:providerId/prefixes/add"

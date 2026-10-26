@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useGetPrefix } from '@/hooks/usePrefixes'
 import { useGetRoles } from '@/hooks/useRoles'
 import { useCreatePrefixInvitationMutation } from '@/hooks/useInvitations'
+import { MEMBERS_ROLE } from '@/auth/roles'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import PageHeader from '@/components/PageHeader'
@@ -56,7 +57,7 @@ const InviteUser = () => {
   const createMutation = useCreatePrefixInvitationMutation()
 
   const roleOptions = (roles ?? [])
-    .filter((role) => role.name !== 'members')
+    .filter((role) => role.name !== MEMBERS_ROLE)
     .map((role) => ({
       value: role.name,
       label: role.attributes?.preferred_name?.[0] ?? role.name,
