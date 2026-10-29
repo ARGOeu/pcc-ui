@@ -18,10 +18,15 @@ const normalizePath = (path: string): string => {
 const isPrefixResource = (path: string, resource: string): boolean =>
   new RegExp(`^/providers/[^/]+/prefixes/[^/]+/${resource}(/|$)`).test(path)
 
+// Matches /prefix-requests and the admin endpoints that review a request.
+const isPrefixRequest = (path: string): boolean =>
+  startsWithSegment(path, '/prefix-requests') ||
+  /^\/admin\/prefix-requests?(\/|$)/.test(path)
+
 export const ENDPOINT_CATEGORIES: EndpointCategory[] = [
   {
     label: 'Admin',
-    match: (p) => startsWithSegment(p, '/admin'),
+    match: (p) => startsWithSegment(p, '/admin') && !isPrefixRequest(p),
   },
   { label: 'Codelist', match: (p) => startsWithSegment(p, '/codelist') },
   { label: 'Domain', match: (p) => startsWithSegment(p, '/domains') },
@@ -36,6 +41,7 @@ export const ENDPOINT_CATEGORIES: EndpointCategory[] = [
     match: (p) => isPrefixResource(p, 'accounts'),
   },
   { label: 'Prefix Handle', match: (p) => isPrefixResource(p, 'handles') },
+  { label: 'Prefix Request', match: isPrefixRequest },
   {
     label: 'Prefix',
     match: (p) => /^\/providers\/[^/]+\/prefixes(\/|$)/.test(p),
@@ -58,6 +64,10 @@ export const ENDPOINT_CATEGORIES: EndpointCategory[] = [
   },
   { label: 'Service', match: (p) => startsWithSegment(p, '/services') },
   { label: 'User Endpoint', match: (p) => startsWithSegment(p, '/users') },
+  {
+    label: 'Validate URL',
+    match: (p) => startsWithSegment(p, '/validate-url'),
+  },
 ]
 
 export const CATEGORY_ORDER = [

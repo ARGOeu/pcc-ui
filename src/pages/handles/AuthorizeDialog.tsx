@@ -64,7 +64,7 @@ const AuthorizeDialog = ({
             token: handleToken,
             authorizedAt: Date.now(),
           })
-          toast.success(`Authorized as ${selectedAccount.username}`)
+          toast.success(`Authorised as ${selectedAccount.username}`)
         },
       },
     )
@@ -216,7 +216,7 @@ const AuthorizeDialog = ({
                 Checking...
               </span>
             ) : (
-              'Authorize'
+              'Authorise'
             )}
           </Button>
         </div>

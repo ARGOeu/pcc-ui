@@ -21,12 +21,12 @@ const AuthorizedAccount = ({
     className={`flex flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-md border border-line bg-surface-muted py-1.5 pr-3 pl-3 text-sm text-body ${className ?? ''}`}
   >
     <span
-      title={`Authorized as ${access.account.username} on ${access.account.endpoint}`}
+      title={`Authorised as ${access.account.username} on ${access.account.endpoint}`}
       className="flex min-w-40 flex-1 items-center gap-2 before:break-all"
     >
       <LockClosedIcon className="size-4 shrink-0 text-muted" />
       <span className="line-clamp-2 min-w-0 text-left wrap-anywhere">
-        Authorized as{' '}
+        Authorised as{' '}
         <strong className="font-mono font-medium">
           {access.account.username}
         </strong>{' '}

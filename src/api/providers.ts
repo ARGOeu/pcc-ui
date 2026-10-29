@@ -2,11 +2,17 @@ import type { Provider, ProviderRequest } from '@/types/providers'
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_URI
 
+type ProvidersError = Error & { forbidden?: boolean }
+
 const throwRequestError = async (response: Response): Promise<never> => {
   const errorData = (await response.json().catch(() => ({}))) as {
     message?: string
   }
-  throw new Error(errorData.message ?? `HTTP error! status: ${response.status}`)
+  const error: ProvidersError = new Error(
+    errorData.message ?? `HTTP error! status: ${response.status}`,
+  )
+  error.forbidden = response.status === 403
+  throw error
 }
 
 export const fetchProviders = async (token: string): Promise<Provider[]> => {
