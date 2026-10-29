@@ -376,7 +376,7 @@ const CreatePrefix = () => {
                   type="text"
                   value={formData.usedBy}
                   onChange={(e) => handleTextChange(e, 'usedBy')}
-                  placeholder="Enter the entity or organization using the prefix"
+                  placeholder="Enter the entity or organisation using the prefix"
                 />
               </div>
             </div>

@@ -65,7 +65,7 @@ export const useGetHandles = (
       }
       if (!access) {
         throw new Error(
-          'Authorization with a Handle service account is required',
+          'Authorisation with a Handle service account is required',
         )
       }
       return fetchHandles(
@@ -165,7 +165,7 @@ export const useGetHandle = (
       }
       if (!access) {
         throw new Error(
-          'Authorization with a Handle service account is required',
+          'Authorisation with a Handle service account is required',
         )
       }
       return fetchHandle(

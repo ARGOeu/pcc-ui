@@ -268,7 +268,7 @@ const SelectDropdown = ({
         createPortal(
           <div
             ref={menuRef}
-            className="fixed z-50 bg-white border border-line rounded-md shadow-lg overflow-hidden"
+            className="fixed z-1100 bg-white border border-line rounded-md shadow-lg overflow-hidden"
           >
             {searchable && (
               <div className="flex items-center gap-2 px-3 py-2 border-b border-line">

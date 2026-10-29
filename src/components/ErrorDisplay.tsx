@@ -1,13 +1,27 @@
 import { ExclamationCircleIcon } from '@heroicons/react/16/solid'
+import EmptyState from '@/components/EmptyState'
 
 interface ErrorDisplayProps {
   error: Error | { message: string } | string
   context?: string
+  forbiddenMessage?: string
 }
 
 const MAX_MESSAGE_LENGTH = 300
 
-const ErrorDisplay = ({ error, context = 'data' }: ErrorDisplayProps) => {
+const ErrorDisplay = ({
+  error,
+  context = 'data',
+  forbiddenMessage,
+}: ErrorDisplayProps) => {
+  const isForbidden =
+    typeof error === 'object' &&
+    'forbidden' in error &&
+    error.forbidden === true
+  if (forbiddenMessage && isForbidden) {
+    return <EmptyState message={forbiddenMessage} />
+  }
+
   const errorMessage =
     typeof error === 'string' ? error : error?.message || 'An error occurred'
 

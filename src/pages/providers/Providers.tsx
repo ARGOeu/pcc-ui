@@ -85,7 +85,11 @@ const Providers = () => {
           <LoadingSpinner size="md" />
         </div>
       ) : error ? (
-        <ErrorDisplay error={error} context="providers" />
+        <ErrorDisplay
+          error={error}
+          context="providers"
+          forbiddenMessage="You have no providers"
+        />
       ) : !providers?.length ? (
         <Card className="px-5 py-8 text-center text-sm italic text-muted">
           No providers found
