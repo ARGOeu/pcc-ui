@@ -161,7 +161,7 @@ const HandlesView = ({ providerId, prefixId }: HandlesViewProps) => {
               variant="outline-primary"
               onClick={() => setAuthorizeDialogOpen(true)}
             >
-              Authorize
+              Authorise
             </Button>
           ))}
       </PageHeader>
@@ -201,7 +201,11 @@ const HandlesView = ({ providerId, prefixId }: HandlesViewProps) => {
             </p>
           </div>
         ) : prefixError ? (
-          <ErrorDisplay error={prefixError} context="prefix" />
+          <ErrorDisplay
+            error={prefixError}
+            context="prefix"
+            forbiddenMessage="You have no access to the handles of this prefix"
+          />
         ) : !access || tokenRejected ? (
           <>
             {tokenRejected && access && (
@@ -218,13 +222,13 @@ const HandlesView = ({ providerId, prefixId }: HandlesViewProps) => {
                   again to continue
                 </span>
                 <Button size="xs" onClick={() => setAuthorizeDialogOpen(true)}>
-                  Authorize
+                  Authorise
                 </Button>
               </div>
             )}
             <div className="rounded-lg border border-line bg-white px-4 py-5 text-center shadow-xs">
               <p className="text-sm italic text-muted">
-                Authorize with a Handle service account to see the handles of
+                Authorise with a Handle service account to see the handles of
                 this prefix
               </p>
             </div>

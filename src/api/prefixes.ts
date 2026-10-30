@@ -9,6 +9,8 @@ import type {
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_URI
 
+type PrefixesError = Error & { forbidden?: boolean }
+
 export const fetchPrefixes = async (
   providerId: number,
   token: string,
@@ -45,9 +47,11 @@ export const fetchPrefixes = async (
     const errorData = (await response.json().catch(() => ({}))) as {
       message?: string
     }
-    throw new Error(
+    const error: PrefixesError = new Error(
       errorData.message ?? `HTTP error! status: ${response.status}`,
     )
+    error.forbidden = response.status === 403
+    throw error
   }
 
   return (await response.json()) as PrefixesResponse
@@ -73,9 +77,11 @@ export const fetchPrefix = async (
     const errorData = (await response.json().catch(() => ({}))) as {
       message?: string
     }
-    throw new Error(
+    const error: PrefixesError = new Error(
       errorData.message ?? `HTTP error! status: ${response.status}`,
     )
+    error.forbidden = response.status === 403
+    throw error
   }
 
   return (await response.json()) as Prefix

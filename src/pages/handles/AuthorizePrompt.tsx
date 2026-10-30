@@ -43,10 +43,10 @@ const AuthorizePrompt = ({
       )}
       <div className="flex flex-col items-center gap-3 rounded-lg border border-line bg-white px-4 py-5 text-center shadow-xs">
         <p className="text-sm italic text-muted">
-          Authorize with a Handle service account to continue
+          Authorise with a Handle service account to continue
         </p>
         <Button variant="outline-primary" onClick={() => setDialogOpen(true)}>
-          Authorize
+          Authorise
         </Button>
       </div>
       {dialogOpen && (

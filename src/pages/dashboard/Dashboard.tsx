@@ -1,4 +1,5 @@
 import { useGetProviders } from '@/hooks/useProviders'
+import { useGetPrefixRequests } from '@/hooks/usePrefixRequests'
 import {
   useGetAdminStatistics,
   useGetProviderStatistics,
@@ -9,6 +10,8 @@ import PageHeader from '@/components/PageHeader'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import ErrorDisplay from '@/components/ErrorDisplay'
 import getProviderCounts from '@/utils/getProviderCounts'
+import { countPendingRequests } from '@/utils/prefixRequests'
+import PendingRequestsNotice from './PendingRequestsNotice'
 import StatisticsView from './StatisticsView'
 import type { ReactNode } from 'react'
 import type { Provider } from '@/types/providers'
@@ -52,6 +55,8 @@ const Dashboard = () => {
     isLoading: isLoadingProviders,
     error: providersError,
   } = useGetProviders(hasAccess)
+  const { data: prefixRequests } = useGetPrefixRequests(isSuperAdmin)
+  const pendingRequestsCount = countPendingRequests(prefixRequests)
 
   if (rolesReady && !hasAccess) {
     return <Navigate to="/" replace />
@@ -67,6 +72,10 @@ const Dashboard = () => {
         subtitle={hasAccess ? getSubtitle(isSuperAdmin, providers) : undefined}
         className="mb-4"
       />
+
+      {pendingRequestsCount > 0 && (
+        <PendingRequestsNotice count={pendingRequestsCount} />
+      )}
 
       {!rolesReady || isLoadingStatistics || isLoadingProviders ? (
         <div className="loading-container">
