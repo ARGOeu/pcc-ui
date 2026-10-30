@@ -17,6 +17,7 @@ import ErrorDisplay from '@/components/ErrorDisplay'
 import SelectDropdown from '@/components/SelectDropdown'
 import validateEmail from '@/utils/validateEmail'
 import { getContactTypeLabel } from '@/utils/contactTypes'
+import ProviderLogoField from './ProviderLogoField'
 import type { FormEvent } from 'react'
 import type { ProviderRequest } from '@/types/providers'
 
@@ -25,12 +26,18 @@ const inputErrorClass =
   'border-red-500! focus:border-red-500! focus:ring-red-500/10!'
 const errorTextClass = 'text-xs text-red-500 mt-1'
 
+const BACKEND_API = import.meta.env.VITE_BACKEND_URI
+
 const providersPath = '/providers'
 const descriptionMaxLength = 255
+
+const isExternalLogo = (logo: string): boolean =>
+  !logo.startsWith(`${BACKEND_API.replace(/\/+$/, '')}/logos/`)
 
 interface FormData {
   name: string
   description: string
+  logo: string
 }
 
 interface ContactRow {
@@ -42,7 +49,7 @@ interface ContactRow {
   emailError: string
 }
 
-const emptyForm: FormData = { name: '', description: '' }
+const emptyForm: FormData = { name: '', description: '', logo: '' }
 
 const validateProviderName = (value: string): string =>
   value.trim() ? '' : 'Provider name is required'
@@ -53,6 +60,7 @@ const validateContactName = (value: string): string =>
 const validators: Record<keyof FormData, (value: string) => string> = {
   name: validateProviderName,
   description: () => '',
+  logo: () => '',
 }
 
 const createRow = (type = '', name = '', email = '') => ({
@@ -93,6 +101,7 @@ const CreateProvider = () => {
       setFormData({
         name: provider.name,
         description: provider.description ?? '',
+        logo: provider.logo ?? '',
       })
       // A provider needs at least one contact, so an empty one starts with a blank row
       // eslint-disable-next-line react-x/set-state-in-effect
@@ -150,9 +159,12 @@ const CreateProvider = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const description = formData.description.trim()
+    const logoChanged = formData.logo !== (provider?.logo ?? '')
+
     const data: ProviderRequest = {
       name: formData.name.trim(),
       description: description || undefined,
+      ...(logoChanged && { logo: formData.logo || null }),
       contacts: contacts.map((row) => ({
         name: row.name.trim(),
         email: row.email.trim(),
@@ -266,17 +278,6 @@ const CreateProvider = () => {
                 )}
               </div>
 
-              <div className="flex flex-col">
-                <label className={`${labelClass} mb-0.5`}>Description</label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => handleChange('description', e.target.value)}
-                  rows={2}
-                  maxLength={descriptionMaxLength}
-                  placeholder="Describe the provider and its services"
-                />
-              </div>
-
               <div className="flex flex-col gap-1.5">
                 <div>
                   <h2 className={`${labelClass} leading-5`}>
@@ -373,6 +374,27 @@ const CreateProvider = () => {
                   </Button>
                 </div>
               </div>
+
+              <div className="flex flex-col">
+                <label className={`${labelClass} mb-0.5`}>Description</label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => handleChange('description', e.target.value)}
+                  rows={2}
+                  maxLength={descriptionMaxLength}
+                  placeholder="Describe the provider and its services"
+                />
+              </div>
+
+              <ProviderLogoField
+                value={formData.logo}
+                initialUrl={
+                  provider?.logo && isExternalLogo(provider.logo)
+                    ? provider.logo
+                    : ''
+                }
+                onChange={(logo) => handleChange('logo', logo)}
+              />
             </div>
           </Card>
         </form>
