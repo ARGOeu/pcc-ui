@@ -2,6 +2,7 @@ import { PencilSquareIcon, TrashIcon } from '@heroicons/react/16/solid'
 import Badge from '@/components/Badge'
 import Card from '@/components/Card'
 import IconButton from '@/components/IconButton'
+import ProviderLogo from '@/components/ProviderLogo'
 import { getContactTypeLabel } from '@/utils/contactTypes'
 import type { Provider } from '@/types/providers'
 
@@ -17,15 +18,18 @@ const ProviderItem = ({ provider, onDelete }: ProviderItemProps) => {
     <li>
       <Card className="px-4 py-3">
         <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            <h2 className="text-base font-semibold leading-6 text-foreground">
-              {provider.name}
-            </h2>
-            {provider.description && (
-              <p className="max-w-prose whitespace-pre-line text-sm text-body">
-                {provider.description}
-              </p>
-            )}
+          <div className="flex min-w-0 items-start gap-3">
+            <ProviderLogo name={provider.name} logo={provider.logo} size="md" />
+            <div className="min-w-0">
+              <h2 className="text-base font-semibold leading-6 text-foreground">
+                {provider.name}
+              </h2>
+              {provider.description && (
+                <p className="max-w-prose whitespace-pre-line text-sm text-body">
+                  {provider.description}
+                </p>
+              )}
+            </div>
           </div>
           <div className="flex shrink-0 items-center gap-1">
             <IconButton

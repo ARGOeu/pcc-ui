@@ -9,11 +9,13 @@ export interface Provider {
   id: number
   name: string
   description?: string
+  logo?: string
   contacts: ProviderContact[]
 }
 
 export interface ProviderRequest {
   name: string
   description?: string
+  logo?: string | null
   contacts: ProviderContact[]
 }
