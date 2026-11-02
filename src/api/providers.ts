@@ -64,7 +64,6 @@ export const createProvider = async (
   return (await response.json()) as Provider
 }
 
-// The backend exposes the provider update as PATCH
 export const updateProvider = async (
   id: number,
   data: ProviderRequest,

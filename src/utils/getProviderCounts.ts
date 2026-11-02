@@ -15,9 +15,10 @@ const collectCounts = (
     counted.map(({ provider, count }): [string, number] => [provider, count]),
   )
 
-  return providers.map(({ id, name }) => ({
+  return providers.map(({ id, name, logo }) => ({
     providerId: id,
     provider: name,
+    logo,
     count: countByName.get(name) ?? 0,
   }))
 }
