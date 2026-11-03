@@ -5,6 +5,7 @@ import { useGetProviders } from '@/hooks/useProviders'
 import { useAuth } from '@/auth/useAuth'
 import { Navigate } from 'react-router-dom'
 import PageHeader from '@/components/PageHeader'
+import EmptyState from '@/components/EmptyState'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import ErrorDisplay from '@/components/ErrorDisplay'
 import {
@@ -106,11 +107,13 @@ const HandlesEntry = () => {
           <LoadingSpinner size="md" />
         </div>
       ) : error ? (
-        <ErrorDisplay error={error} context="prefixes" />
+        <ErrorDisplay
+          error={error}
+          context="prefixes"
+          forbiddenMessage="You have no handles"
+        />
       ) : (
-        <div className="rounded-lg border border-line bg-white px-4 py-5 text-center shadow-xs">
-          <p className="text-sm italic text-muted">No prefixes found</p>
-        </div>
+        <EmptyState message="No prefixes found" />
       )}
     </div>
   )

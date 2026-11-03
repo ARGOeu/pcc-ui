@@ -9,6 +9,7 @@ const tabInactive =
 export interface TabItem {
   id: string
   label: string
+  count?: number
   icon?: ComponentType<{ className?: string }>
   hasError?: boolean
 }
@@ -33,6 +34,9 @@ const Tabs = ({ tabs, activeTab, onChange, className }: TabsProps) => (
         >
           {Icon && <Icon className="size-5" />}
           {tab.label}
+          {tab.count !== undefined && (
+            <span className="ml-1 font-normal">{tab.count}</span>
+          )}
           {tab.hasError ? (
             <span
               className={`inline-block size-1.5 rounded-full bg-red-500 ml-1.5 transition-opacity ${tab.hasError ? 'opacity-100' : 'opacity-0'}`}

@@ -209,7 +209,11 @@ const Prefixes = () => {
           <LoadingSpinner size="md" />
         </div>
       ) : providersError ? (
-        <ErrorDisplay error={providersError} context="providers" />
+        <ErrorDisplay
+          error={providersError}
+          context="providers"
+          forbiddenMessage="You have no prefixes"
+        />
       ) : (
         <>
           <Tabs
@@ -251,7 +255,11 @@ const Prefixes = () => {
               <LoadingSpinner size="md" />
             </div>
           ) : error ? (
-            <ErrorDisplay error={error} context="prefixes" />
+            <ErrorDisplay
+              error={error}
+              context="prefixes"
+              forbiddenMessage="You have no prefixes"
+            />
           ) : (
             <>
               <PrefixesTable

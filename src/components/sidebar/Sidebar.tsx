@@ -1,5 +1,6 @@
 import { useGetUserProfile } from '@/hooks/useProfile'
 import { useGetUserInvitations } from '@/hooks/useInvitations'
+import { useGetPendingRequestsCount } from '@/hooks/usePrefixRequests'
 import { useAuth } from '@/auth/useAuth'
 import { useLocation } from 'react-router-dom'
 import { TagIcon } from '@heroicons/react/16/solid'
@@ -14,7 +15,8 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) => {
-  const { authenticated, logout, isSuperAdmin, isProviderAdmin } = useAuth()
+  const { authenticated, logout, isSuperAdmin, isProviderAdmin, rolesReady } =
+    useAuth()
   const { pathname } = useLocation()
   const { data: profile } = useGetUserProfile()
   const { data: invitations } = useGetUserInvitations(1, 100, authenticated, {
@@ -24,6 +26,9 @@ const Sidebar = ({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) => {
   const pendingCount =
     invitations?.content.filter((invitation) => invitation.status === 'PENDING')
       .length ?? 0
+  const pendingRequestsCount = useGetPendingRequestsCount(isSuperAdmin)
+  const hasAdminRole = isSuperAdmin || isProviderAdmin
+  const isRequestsActive = /^\/requests(\/|$)/.test(pathname)
 
   return (
     <aside
@@ -37,7 +42,7 @@ const Sidebar = ({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) => {
 
       {authenticated ? (
         <nav className="flex flex-1 flex-col gap-0.5 p-4">
-          {(isSuperAdmin || isProviderAdmin) && (
+          {hasAdminRole && (
             <SidebarNavItem
               to="/dashboard"
               label="Dashboard"
@@ -61,7 +66,16 @@ const Sidebar = ({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) => {
             active={/^\/providers(\/add|\/\d+\/edit)?\/?$/.test(pathname)}
             onClick={onCloseMobileMenu}
           />
-          <div>
+          {hasAdminRole && (
+            <SidebarNavItem
+              to="/requests"
+              label="Requests"
+              badge={pendingRequestsCount}
+              active={isRequestsActive}
+              onClick={onCloseMobileMenu}
+            />
+          )}
+          <div className="flex flex-col gap-0.5">
             <SidebarSectionLabel>Account</SidebarSectionLabel>
             <SidebarNavItem
               to="/my-invitations"
@@ -69,6 +83,14 @@ const Sidebar = ({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) => {
               badge={pendingCount}
               onClick={onCloseMobileMenu}
             />
+            {rolesReady && !hasAdminRole && (
+              <SidebarNavItem
+                to="/requests"
+                label="My requests"
+                active={isRequestsActive}
+                onClick={onCloseMobileMenu}
+              />
+            )}
           </div>
           {isSuperAdmin && (
             <div>

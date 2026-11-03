@@ -19,13 +19,14 @@ const StatisticsView = ({
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
       <StatCard label="Providers" value={totalProviders} to="/providers" />
       <StatCard label="Prefixes" value={totalPrefixes} to="/prefixes" />
-      <StatCard label="Accounts" value={totalAccounts} to="/prefixes" />
+      <StatCard label="Accounts" value={totalAccounts} />
     </div>
     {breakdown && (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <ProviderBarList
           title="Prefixes by provider"
           items={breakdown.prefixes}
+          linked
         />
         <ProviderBarList
           title="Accounts by provider"

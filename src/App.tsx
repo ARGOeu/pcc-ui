@@ -23,6 +23,9 @@ import HandlesEntry from '@/pages/handles/HandlesEntry'
 import CreateAccount from '@/pages/prefixes/CreateAccount'
 import Providers from '@/pages/providers/Providers'
 import CreateProvider from '@/pages/providers/CreateProvider'
+import Requests from '@/pages/requests/Requests'
+import CreateRequest from '@/pages/requests/CreateRequest'
+import RequestDetails from '@/pages/requests/RequestDetails'
 import MyInvitations from '@/pages/MyInvitations'
 import InvitationReview from '@/pages/InvitationReview'
 import { AuthProvider } from '@/auth/AuthProvider'
@@ -122,6 +125,13 @@ const App = () => {
                   path="providers/:providerId/edit"
                   element={<CreateProvider />}
                 />
+                <Route path="requests" element={<Requests />} />
+                <Route path="requests/add" element={<CreateRequest />} />
+                <Route
+                  path="requests/:id/details"
+                  element={<RequestDetails />}
+                />
+                <Route path="requests/:id/edit" element={<CreateRequest />} />
                 <Route path="my-invitations" element={<MyInvitations />} />
                 <Route path="endpoints-access" element={<EndpointsAccess />} />
                 <Route path="*" element={<NotFound />} />
