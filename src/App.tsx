@@ -13,6 +13,7 @@ import NotFound from '@/pages/NotFound'
 import Prefixes from '@/pages/prefixes/Prefixes'
 import CreatePrefix from '@/pages/prefixes/CreatePrefix'
 import PrefixDetails from '@/pages/prefixes/PrefixDetails'
+import SetStatistics from '@/pages/prefixes/SetStatistics'
 import EndpointsAccess from '@/pages/endpoints-access'
 import InviteUser from '@/pages/prefixes/InviteUser'
 import Accounts from '@/pages/prefixes/Accounts'
@@ -85,6 +86,10 @@ const App = () => {
                 <Route
                   path="providers/:providerId/prefixes/:id/edit"
                   element={<CreatePrefix />}
+                />
+                <Route
+                  path="providers/:providerId/prefixes/:id/statistics"
+                  element={<SetStatistics />}
                 />
                 <Route
                   path="providers/:providerId/prefixes/:id/invite"

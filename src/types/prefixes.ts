@@ -68,8 +68,8 @@ export interface PrefixStatistics {
 }
 
 export interface PrefixStatisticsRequest {
-  handles_count?: number
-  resolvable_count?: number
-  unresolvable_count?: number
-  unchecked_count?: number
+  handles_count: number
+  resolvable_count: number
+  unresolvable_count: number
+  unchecked_count: number
 }
