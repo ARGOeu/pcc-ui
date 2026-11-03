@@ -401,7 +401,11 @@ export const useSetPrefixStatisticsMutation = () => {
       }
       return setPrefixStatistics(providerId, name, data, token)
     },
-    onSuccess: (_, { providerId, name }) => {
+    onSuccess: (data, { providerId, name }) => {
+      queryClient.setQueryData<PrefixStatistics>(
+        ['prefix-statistics', providerId, name],
+        data,
+      )
       void queryClient.invalidateQueries({
         queryKey: ['prefix-statistics', providerId, name],
       })

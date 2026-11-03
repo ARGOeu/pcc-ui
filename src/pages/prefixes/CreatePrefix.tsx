@@ -248,8 +248,8 @@ const CreatePrefix = () => {
         subtitle={
           isEditMode ? (
             <>
-              Update details for prefix
-              {prefixData?.name && <strong> {prefixData.name}</strong>}
+              Update details for prefix{' '}
+              {prefixData?.name && <strong>{prefixData.name}</strong>}
             </>
           ) : (
             'Register a new prefix in the catalogue'

@@ -1,11 +1,13 @@
 import { useState } from 'react'
 
-type ProviderLogoSize = 'xs' | 'md' | 'lg'
+type ProviderLogoSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 
 const sizeClasses: Record<ProviderLogoSize, { box: string; image: string }> = {
-  xs: { box: 'size-5 rounded text-xs', image: 'p-0.5' },
+  xs: { box: 'size-6 rounded text-xs', image: 'p-0' },
+  sm: { box: 'size-8 rounded-md text-sm', image: 'p-0.5' },
   md: { box: 'size-11 rounded-lg text-base', image: 'p-1' },
-  lg: { box: 'size-12 rounded-lg text-lg', image: 'p-1' },
+  lg: { box: 'size-14 rounded-xl text-xl', image: 'p-1' },
+  xl: { box: 'size-16 rounded-xl text-2xl', image: 'p-1' },
 }
 
 interface ProviderLogoProps {
