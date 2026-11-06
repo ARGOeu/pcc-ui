@@ -143,17 +143,17 @@ const CreateAccount = () => {
         subtitle={
           isEditMode ? (
             <>
-              Update the account
-              {account?.email && <strong> {account.email}</strong>} on prefix
+              Update the account{' '}
+              {account?.email && <strong>{account.email}</strong>} on prefix{' '}
               {prefix?.name && (
-                <strong className="font-mono"> {prefix.name}</strong>
+                <strong className="font-mono">{prefix.name}</strong>
               )}
             </>
           ) : (
             <>
-              Add a Handle service account to prefix
+              Add a Handle service account to prefix{' '}
               {prefix?.name && (
-                <strong className="font-mono"> {prefix.name}</strong>
+                <strong className="font-mono">{prefix.name}</strong>
               )}
             </>
           )

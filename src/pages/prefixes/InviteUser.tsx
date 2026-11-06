@@ -99,8 +99,8 @@ const InviteUser = () => {
         title="Invite user"
         subtitle={
           <>
-            Invite a user by email and give them a role on prefix
-            {prefix?.name && <strong> {prefix.name}</strong>}
+            Invite a user by email and give them a role on prefix{' '}
+            {prefix?.name && <strong>{prefix.name}</strong>}
           </>
         }
         navigateTo={{

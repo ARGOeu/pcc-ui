@@ -39,7 +39,7 @@ const PrefixDetails = () => {
     data: statistics,
     isLoading: isStatisticsLoading,
     error: statisticsError,
-  } = useGetPrefixStatistics(providerId, prefix?.name ?? '', !!prefix)
+  } = useGetPrefixStatistics(providerId, prefixId, !!id)
 
   return (
     <div className="page-container">

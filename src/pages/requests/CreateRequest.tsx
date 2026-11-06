@@ -57,10 +57,8 @@ const CreateRequest = () => {
         subtitle={
           isEditMode ? (
             <>
-              Update the request
-              {request?.project_name && (
-                <strong> {request.project_name}</strong>
-              )}
+              Update the request{' '}
+              {request?.project_name && <strong>{request.project_name}</strong>}
             </>
           ) : isMember ? (
             'Describe your organisation and project. An administrator reviews the request and assigns a provider to it'
