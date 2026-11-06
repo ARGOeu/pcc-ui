@@ -297,13 +297,13 @@ export const useDeletePrefixMutation = () => {
 
 export const useGetPrefixCount = (
   providerId: number,
-  name: string,
+  id: number,
   enabled = true,
 ) => {
   const { token } = useAuth()
 
   return useQuery<number, Error>({
-    queryKey: ['prefix-count', providerId, name],
+    queryKey: ['prefix-count', providerId, id],
     queryFn: () => {
       if (!token) {
         throw new Error('No authentication token available')
@@ -311,25 +311,25 @@ export const useGetPrefixCount = (
       if (!providerId) {
         throw new Error('Provider ID is required')
       }
-      if (!name) {
-        throw new Error('Prefix name is required')
+      if (!id) {
+        throw new Error('Prefix ID is required')
       }
-      return fetchPrefixCount(providerId, name, token)
+      return fetchPrefixCount(providerId, id, token)
     },
     retry: false,
-    enabled: enabled && !!token && !!providerId && !!name,
+    enabled: enabled && !!token && !!providerId && !!id,
   })
 }
 
 export const useGetPrefixResolvableCount = (
   providerId: number,
-  name: string,
+  id: number,
   enabled = true,
 ) => {
   const { token } = useAuth()
 
   return useQuery<number, Error>({
-    queryKey: ['prefix-resolvable-count', providerId, name],
+    queryKey: ['prefix-resolvable-count', providerId, id],
     queryFn: () => {
       if (!token) {
         throw new Error('No authentication token available')
@@ -337,24 +337,24 @@ export const useGetPrefixResolvableCount = (
       if (!providerId) {
         throw new Error('Provider ID is required')
       }
-      if (!name) {
-        throw new Error('Prefix name is required')
+      if (!id) {
+        throw new Error('Prefix ID is required')
       }
-      return fetchPrefixResolvableCount(providerId, name, token)
+      return fetchPrefixResolvableCount(providerId, id, token)
     },
     retry: false,
-    enabled: enabled && !!token && !!providerId && !!name,
+    enabled: enabled && !!token && !!providerId && !!id,
   })
 }
 
 export const useGetPrefixStatistics = (
   providerId: number,
-  name: string,
+  id: number,
   enabled = true,
 ) => {
   const { token } = useAuth()
   return useQuery<PrefixStatistics, Error>({
-    queryKey: ['prefix-statistics', providerId, name],
+    queryKey: ['prefix-statistics', providerId, id],
     queryFn: () => {
       if (!token) {
         throw new Error('No authentication token available')
@@ -362,13 +362,13 @@ export const useGetPrefixStatistics = (
       if (!providerId) {
         throw new Error('Provider ID is required')
       }
-      if (!name) {
-        throw new Error('Prefix name is required')
+      if (!id) {
+        throw new Error('Prefix ID is required')
       }
-      return fetchPrefixStatistics(providerId, name, token)
+      return fetchPrefixStatistics(providerId, id, token)
     },
     retry: false,
-    enabled: enabled && !!token && !!providerId && !!name,
+    enabled: enabled && !!token && !!providerId && !!id,
   })
 }
 
@@ -379,15 +379,15 @@ export const useSetPrefixStatisticsMutation = () => {
   return useMutation<
     PrefixStatistics,
     Error,
-    { providerId: number; name: string; data: PrefixStatisticsRequest }
+    { providerId: number; id: number; data: PrefixStatisticsRequest }
   >({
     mutationFn: ({
       providerId,
-      name,
+      id,
       data,
     }: {
       providerId: number
-      name: string
+      id: number
       data: PrefixStatisticsRequest
     }) => {
       if (!token) {
@@ -396,18 +396,18 @@ export const useSetPrefixStatisticsMutation = () => {
       if (!providerId) {
         throw new Error('Provider ID is required')
       }
-      if (!name) {
-        throw new Error('Prefix name is required')
+      if (!id) {
+        throw new Error('Prefix ID is required')
       }
-      return setPrefixStatistics(providerId, name, data, token)
+      return setPrefixStatistics(providerId, id, data, token)
     },
-    onSuccess: (data, { providerId, name }) => {
+    onSuccess: (data, { providerId, id }) => {
       queryClient.setQueryData<PrefixStatistics>(
-        ['prefix-statistics', providerId, name],
+        ['prefix-statistics', providerId, id],
         data,
       )
       void queryClient.invalidateQueries({
-        queryKey: ['prefix-statistics', providerId, name],
+        queryKey: ['prefix-statistics', providerId, id],
       })
     },
     onError: (error) => {
