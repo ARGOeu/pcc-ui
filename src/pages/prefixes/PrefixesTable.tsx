@@ -1,5 +1,6 @@
 import {
   Bars3Icon,
+  ChartBarIcon,
   LinkIcon,
   PencilSquareIcon,
   TrashIcon,
@@ -37,7 +38,7 @@ const PrefixesTable = ({
             <th className={thBase}>Domain</th>
             <th className={thBase}>Contract type</th>
             <th className={thBase}>Contract end</th>
-            <th className={`${thBase} w-48`}>Actions</th>
+            <th className={`${thBase} w-56`}>Actions</th>
           </tr>
         </thead>
       }
@@ -85,6 +86,12 @@ const PrefixesTable = ({
                   icon={<UserCog className="size-4 md:size-5" />}
                   label="Manage accounts"
                   href={`/providers/${prefix.provider_id}/prefixes/${prefix.id}/accounts`}
+                  className={`${actionButtonClass} tooltip-end`}
+                />
+                <IconButton
+                  icon={<ChartBarIcon className="size-4 md:size-5" />}
+                  label="Set statistics"
+                  href={`/providers/${prefix.provider_id}/prefixes/${prefix.id}/statistics`}
                   className={`${actionButtonClass} tooltip-end`}
                 />
                 <IconButton
