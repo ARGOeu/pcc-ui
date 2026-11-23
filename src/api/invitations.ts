@@ -1,8 +1,10 @@
 import type {
-  CreatePrefixInvitationRequest,
+  CreateInvitationRequest,
   Invitation,
+  InvitationSortField,
   InvitationsResponse,
   RespondToInvitationRequest,
+  SortOrder,
 } from '@/types/invitations'
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_URI
@@ -13,7 +15,7 @@ export const fetchUserInvitations = async (
   size = 10,
 ): Promise<InvitationsResponse> => {
   const response = await fetch(
-    `${BACKEND_API}/api/v1/users/invitation?page=${page}&size=${size}`,
+    `${BACKEND_API}/api/v1/users/invitations?page=${page}&size=${size}`,
     {
       method: 'GET',
       headers: {
@@ -39,13 +41,16 @@ export const fetchUserInvitation = async (
   id: string,
   token: string,
 ): Promise<Invitation> => {
-  const response = await fetch(`${BACKEND_API}/api/v1/users/invitation/${id}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+  const response = await fetch(
+    `${BACKEND_API}/api/v1/users/invitations/${id}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     },
-  })
+  )
 
   if (!response.ok) {
     const errorData = (await response.json().catch(() => ({}))) as {
@@ -65,7 +70,7 @@ export const respondToInvitation = async (
   token: string,
 ): Promise<Invitation> => {
   const response = await fetch(
-    `${BACKEND_API}/api/v1/users/invitation/${invitationId}`,
+    `${BACKEND_API}/api/v1/users/invitations/${invitationId}`,
     {
       method: 'PATCH',
       headers: {
@@ -88,17 +93,31 @@ export const respondToInvitation = async (
   return (await response.json()) as Invitation
 }
 
-export const fetchPrefixInvitations = async (
-  providerId: number,
-  prefixId: number,
+export const fetchInvitations = async (
   token: string,
   page = 1,
   size = 10,
+  apiResource?: string,
+  resourceId?: string,
   search?: string,
+  sort?: InvitationSortField,
+  order?: SortOrder,
 ): Promise<InvitationsResponse> => {
-  let url = `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${prefixId}/invitations?page=${page}&size=${size}`
+  let url = `${BACKEND_API}/api/v1/invitations?page=${page}&size=${size}`
+  if (apiResource) {
+    url += `&api_resource=${encodeURIComponent(apiResource)}`
+  }
+  if (resourceId) {
+    url += `&resource_id=${encodeURIComponent(resourceId)}`
+  }
   if (search) {
     url += `&search=${encodeURIComponent(search)}`
+  }
+  if (sort) {
+    url += `&sort=${sort}`
+  }
+  if (order) {
+    url += `&order=${order}`
   }
 
   const response = await fetch(url, {
@@ -121,14 +140,12 @@ export const fetchPrefixInvitations = async (
   return (await response.json()) as InvitationsResponse
 }
 
-export const fetchPrefixInvitation = async (
-  providerId: number,
-  prefixId: number,
+export const fetchInvitation = async (
   invitationId: string,
   token: string,
 ): Promise<Invitation> => {
   const response = await fetch(
-    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${prefixId}/invitations/${invitationId}`,
+    `${BACKEND_API}/api/v1/invitations/${invitationId}`,
     {
       method: 'GET',
       headers: {
@@ -150,23 +167,18 @@ export const fetchPrefixInvitation = async (
   return (await response.json()) as Invitation
 }
 
-export const createPrefixInvitation = async (
-  providerId: number,
-  prefixId: number,
-  data: CreatePrefixInvitationRequest,
+export const createInvitation = async (
+  data: CreateInvitationRequest,
   token: string,
 ): Promise<Invitation> => {
-  const response = await fetch(
-    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${prefixId}/invitations`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
+  const response = await fetch(`${BACKEND_API}/api/v1/invitations`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
-  )
+    body: JSON.stringify(data),
+  })
 
   if (!response.ok) {
     const errorData = (await response.json().catch(() => ({}))) as {
@@ -183,14 +195,12 @@ export const createPrefixInvitation = async (
   return (await response.json()) as Invitation
 }
 
-export const revokePrefixInvitation = async (
-  providerId: number,
-  prefixId: number,
+export const revokeInvitation = async (
   invitationId: string,
   token: string,
 ): Promise<Invitation> => {
   const response = await fetch(
-    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${prefixId}/invitations/${invitationId}`,
+    `${BACKEND_API}/api/v1/invitations/${invitationId}`,
     {
       method: 'PATCH',
       headers: {

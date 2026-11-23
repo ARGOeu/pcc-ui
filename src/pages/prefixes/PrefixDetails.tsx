@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { useGetPrefix, useGetPrefixStatistics } from '@/hooks/usePrefixes'
+import { usePermissions } from '@/auth/usePermissions'
 import PageHeader from '@/components/PageHeader'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
@@ -40,6 +41,7 @@ const PrefixDetails = () => {
     isLoading: isStatisticsLoading,
     error: statisticsError,
   } = useGetPrefixStatistics(providerId, prefixId, !!id)
+  const { isAllowed } = usePermissions()
 
   return (
     <div className="page-container">
@@ -60,17 +62,24 @@ const PrefixDetails = () => {
       >
         {prefix && (
           <div className="flex items-center gap-4">
-            <Button
-              variant="outline-primary"
-              href={`/providers/${providerId}/prefixes/${prefix.id}/invite`}
-            >
-              Invite a user
-            </Button>
-            <Button
-              href={`/providers/${providerId}/prefixes/${prefix.id}/edit`}
-            >
-              Edit prefix
-            </Button>
+            {isAllowed('prefix.invite', {
+              providerId,
+              prefixId: prefix.id,
+            }) && (
+              <Button
+                variant="outline-primary"
+                href={`/providers/${providerId}/prefixes/${prefix.id}/invite`}
+              >
+                Invite a user
+              </Button>
+            )}
+            {isAllowed('prefix.edit', { providerId, prefixId: prefix.id }) && (
+              <Button
+                href={`/providers/${providerId}/prefixes/${prefix.id}/edit`}
+              >
+                Edit prefix
+              </Button>
+            )}
           </div>
         )}
       </PageHeader>

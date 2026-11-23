@@ -19,6 +19,8 @@ export interface UserRoles {
   roles: string[]
   isSuperAdmin: boolean
   isProviderAdmin: boolean
+  isPrefixAdmin: boolean
+  isPrefixMember: boolean
 }
 
 export interface RegistrationResponse {

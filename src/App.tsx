@@ -29,6 +29,9 @@ import CreateRequest from '@/pages/requests/CreateRequest'
 import RequestDetails from '@/pages/requests/RequestDetails'
 import MyInvitations from '@/pages/MyInvitations'
 import InvitationReview from '@/pages/InvitationReview'
+import AdminInviteUser from '@/pages/AdminInviteUser'
+import Invitations from '@/pages/invitations'
+import InviteProviderUser from '@/pages/providers/InviteProviderUser'
 import { AuthProvider } from '@/auth/AuthProvider'
 import { HandleAccessProvider } from '@/auth/HandleAccessProvider'
 import { notifySessionExpired } from '@/auth/authEvents'
@@ -130,6 +133,10 @@ const App = () => {
                   path="providers/:providerId/edit"
                   element={<CreateProvider />}
                 />
+                <Route
+                  path="providers/:providerId/invite"
+                  element={<InviteProviderUser />}
+                />
                 <Route path="requests" element={<Requests />} />
                 <Route path="requests/add" element={<CreateRequest />} />
                 <Route
@@ -137,7 +144,9 @@ const App = () => {
                   element={<RequestDetails />}
                 />
                 <Route path="requests/:id/edit" element={<CreateRequest />} />
+                <Route path="invitations" element={<Invitations />} />
                 <Route path="my-invitations" element={<MyInvitations />} />
+                <Route path="invite-user" element={<AdminInviteUser />} />
                 <Route path="endpoints-access" element={<EndpointsAccess />} />
                 <Route path="*" element={<NotFound />} />
               </Route>

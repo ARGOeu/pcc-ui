@@ -75,6 +75,13 @@ const Sidebar = ({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) => {
               onClick={onCloseMobileMenu}
             />
           )}
+          {hasAdminRole && (
+            <SidebarNavItem
+              to="/invitations"
+              label="Invitations"
+              onClick={onCloseMobileMenu}
+            />
+          )}
           <div className="flex flex-col gap-0.5">
             <SidebarSectionLabel>Account</SidebarSectionLabel>
             <SidebarNavItem
@@ -95,6 +102,11 @@ const Sidebar = ({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) => {
           {isSuperAdmin && (
             <div>
               <SidebarSectionLabel>Admin</SidebarSectionLabel>
+              <SidebarNavItem
+                to="/invite-user"
+                label="Invite user"
+                onClick={onCloseMobileMenu}
+              />
               <SidebarNavItem
                 to="/endpoints-access"
                 label="Endpoints access"

@@ -6,6 +6,8 @@ import {
   useGetRoleAssignedEndpoints,
   useGetSecuredEndpoints,
 } from '@/hooks/useSecuredEndpoints'
+import { useAuth } from '@/auth/useAuth'
+import { Navigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import PageHeader from '@/components/PageHeader'
 import LoadingSpinner from '@/components/LoadingSpinner'
@@ -19,6 +21,7 @@ import type { Scope } from '@/types/securedEndpoints'
 type PanelMode = 'assign' | 'create' | 'edit'
 
 const EndpointsAccess = () => {
+  const { rolesReady, isSuperAdmin } = useAuth()
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null)
   const [panelMode, setPanelMode] = useState<PanelMode>('assign')
   const [editingRole, setEditingRole] = useState<Role | null>(null)
@@ -182,6 +185,14 @@ const EndpointsAccess = () => {
 
   const selectedRole =
     roles?.find((role) => role.id === effectiveSelectedRoleId) ?? null
+
+  if (!rolesReady) {
+    return null
+  }
+
+  if (!isSuperAdmin) {
+    return <Navigate to="/" replace />
+  }
 
   return (
     <div className="page-container mb-8">

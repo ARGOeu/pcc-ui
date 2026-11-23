@@ -5,7 +5,8 @@ import {
   useUpdateProviderMutation,
 } from '@/hooks/useProviders'
 import { useGetContactTypes } from '@/hooks/useCodelist'
-import { useNavigate, useParams } from 'react-router-dom'
+import { usePermissions } from '@/auth/usePermissions'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { XMarkIcon } from '@heroicons/react/16/solid'
 import { toast } from 'sonner'
 import PageHeader from '@/components/PageHeader'
@@ -77,6 +78,7 @@ const CreateProvider = () => {
   const providerId = Number(providerIdParam)
   const isEditMode = Boolean(providerIdParam)
   const navigate = useNavigate()
+  const { isAllowed, rolesReady } = usePermissions()
 
   const [formData, setFormData] = useState<FormData>(emptyForm)
   const [errors, setErrors] = useState<FormData>(emptyForm)
@@ -197,6 +199,16 @@ const CreateProvider = () => {
         },
       )
     }
+  }
+
+  if (!rolesReady) {
+    return null
+  }
+
+  if (
+    !isAllowed(isEditMode ? 'provider.edit' : 'provider.create', { providerId })
+  ) {
+    return <Navigate to="/providers" replace />
   }
 
   return (

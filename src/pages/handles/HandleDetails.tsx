@@ -1,5 +1,6 @@
 import { useGetHandle } from '@/hooks/useHandles'
 import { useHandleAccess } from '@/auth/useHandleAccess'
+import { usePermissions } from '@/auth/usePermissions'
 import { isTokenRejected } from '@/api/handles'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import { useParams } from 'react-router-dom'
@@ -33,6 +34,7 @@ const HandleDetails = () => {
   const handlesPath = `/providers/${providerId}/prefixes/${prefixId}/handles`
 
   const { access } = useHandleAccess(prefixId)
+  const { isAllowed } = usePermissions()
   const {
     data: handle,
     isLoading,
@@ -50,7 +52,7 @@ const HandleDetails = () => {
           title="Handle details"
           navigateTo={{ label: 'Back to handles', to: handlesPath }}
         >
-          {handle && (
+          {handle && isAllowed('handle.edit', { providerId, prefixId }) && (
             <Button
               variant="outline-primary"
               href={`${handlesPath}/${encodeURIComponent(suffix)}/edit`}

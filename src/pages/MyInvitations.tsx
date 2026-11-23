@@ -15,12 +15,9 @@ import Badge from '@/components/Badge'
 import IconButton from '@/components/IconButton'
 import capitalizeWord from '@/utils/capitalizeWord'
 import formatDate from '@/utils/formatDate'
+import formatInvitationResource from '@/utils/formatInvitationResource'
 import getRolePreferredName from '@/utils/getRolePreferredName'
-import type {
-  Invitation,
-  InvitationAction,
-  InvitationStatus,
-} from '@/types/invitations'
+import type { InvitationAction, InvitationStatus } from '@/types/invitations'
 
 const pageSize = 10
 
@@ -46,9 +43,9 @@ const MyInvitations = () => {
   const { data: roles } = useGetRoles()
   const respondMutation = useRespondToInvitationMutation()
 
-  const handleRespond = (invitation: Invitation, action: InvitationAction) => {
+  const handleRespond = (invitationId: string, action: InvitationAction) => {
     respondMutation.mutate(
-      { invitation, action },
+      { invitationId, action },
       {
         onSuccess: () => {
           toast.success(`Invitation ${actionText[action].past} successfully!`)
@@ -70,7 +67,7 @@ const MyInvitations = () => {
     <div className="page-container">
       <PageHeader
         title="My invitations"
-        subtitle="Accept or reject invitations to take a role on a prefix in the catalogue"
+        subtitle="Accept or reject invitations to take a role in the catalogue"
         className="mb-4"
       />
 
@@ -90,7 +87,7 @@ const MyInvitations = () => {
             header={
               <thead className="bg-gray-100">
                 <tr>
-                  <th className={thBase}>Prefix</th>
+                  <th className={thBase}>Resource</th>
                   <th className={thBase}>Email</th>
                   <th className={thBase}>Role</th>
                   <th className={thBase}>Status</th>
@@ -106,7 +103,7 @@ const MyInvitations = () => {
                   <td
                     className={`${tdBase} font-medium text-foreground wrap-break-word`}
                   >
-                    {invitation.prefix_name}
+                    {formatInvitationResource(invitation)}
                   </td>
                   <td className={`${tdBase} text-muted break-all`}>
                     {invitation.email}
@@ -136,14 +133,14 @@ const MyInvitations = () => {
                         <IconButton
                           icon={<CheckCircleIcon className="size-6 shrink-0" />}
                           label="Accept invitation"
-                          onClick={() => handleRespond(invitation, 'ACCEPT')}
+                          onClick={() => handleRespond(invitation.id, 'ACCEPT')}
                           disabled={respondMutation.isPending}
                           className="text-emerald-600 bg-emerald-50 hover:bg-emerald-100"
                         />
                         <IconButton
                           icon={<XCircleIcon className="size-6 shrink-0" />}
                           label="Reject invitation"
-                          onClick={() => handleRespond(invitation, 'REJECT')}
+                          onClick={() => handleRespond(invitation.id, 'REJECT')}
                           disabled={respondMutation.isPending}
                           className="text-red-600 bg-red-50 hover:bg-red-100"
                         />

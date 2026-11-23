@@ -21,7 +21,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { data: profile, isPending: isPendingProfile } = useQuery(
     userProfileQueryOptions(token),
   )
-  const { roles, isSuperAdmin, isProviderAdmin } = getUserRoles(profile)
+  const {
+    roles,
+    isSuperAdmin,
+    isProviderAdmin,
+    isPrefixAdmin,
+    isPrefixMember,
+  } = getUserRoles(profile)
 
   const startedRef = useRef(false)
   const refreshTimerRef = useRef<number | null>(null)
@@ -126,6 +132,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         roles,
         isSuperAdmin,
         isProviderAdmin,
+        isPrefixAdmin,
+        isPrefixMember,
         login,
         logout,
       }}
