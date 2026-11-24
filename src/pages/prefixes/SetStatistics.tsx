@@ -91,7 +91,7 @@ const SetStatistics = () => {
     error: prefixError,
   } = useGetPrefix(providerId, prefixId, !!id)
   const { data: statistics, isLoading: isStatisticsLoading } =
-    useGetPrefixStatistics(providerId, prefix?.name ?? '', !!prefix)
+    useGetPrefixStatistics(providerId, prefixId, !!id)
   const mutation = useSetPrefixStatisticsMutation()
 
   const savedForm: FormData = statistics
@@ -118,9 +118,6 @@ const SetStatistics = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!prefix) {
-      return
-    }
     const data: PrefixStatisticsRequest = {
       handles_count: Number(formData.handles_count),
       resolvable_count: Number(formData.resolvable_count),
@@ -129,13 +126,11 @@ const SetStatistics = () => {
     }
 
     mutation.mutate(
-      { providerId, name: prefix.name, data },
+      { providerId, id: prefixId, data },
       {
         onSuccess: () => {
           toast.success('Statistics saved successfully!')
-          void navigate(
-            `/providers/${providerId}/prefixes/${prefix.id}/details`,
-          )
+          void navigate(`/providers/${providerId}/prefixes/${prefixId}/details`)
         },
         onError: (error) => {
           toast.error(`Failed to save statistics: ${error.message}`)

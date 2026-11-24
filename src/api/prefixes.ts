@@ -213,11 +213,11 @@ export const deletePrefix = async (
 
 export const fetchPrefixCount = async (
   providerId: number,
-  name: string,
+  id: number,
   token: string,
 ): Promise<number> => {
   const response = await fetch(
-    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${name}/count`,
+    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${id}/count`,
     {
       method: 'GET',
       headers: {
@@ -241,11 +241,11 @@ export const fetchPrefixCount = async (
 
 export const fetchPrefixResolvableCount = async (
   providerId: number,
-  name: string,
+  id: number,
   token: string,
 ): Promise<number> => {
   const response = await fetch(
-    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${name}/resolvable`,
+    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${id}/resolvable`,
     {
       method: 'GET',
       headers: {
@@ -269,11 +269,11 @@ export const fetchPrefixResolvableCount = async (
 
 export const fetchPrefixStatistics = async (
   providerId: number,
-  name: string,
+  id: number,
   token: string,
 ): Promise<PrefixStatistics> => {
   const response = await fetch(
-    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${name}/statistic`,
+    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${id}/statistic`,
     {
       method: 'GET',
       headers: {
@@ -297,12 +297,12 @@ export const fetchPrefixStatistics = async (
 
 export const setPrefixStatistics = async (
   providerId: number,
-  name: string,
+  id: number,
   data: PrefixStatisticsRequest,
   token: string,
 ): Promise<PrefixStatistics> => {
   const response = await fetch(
-    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${name}/statistic`,
+    `${BACKEND_API}/api/v1/providers/${providerId}/prefixes/${id}/statistic`,
     {
       method: 'POST',
       headers: {
