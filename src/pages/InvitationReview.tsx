@@ -16,8 +16,9 @@ import { toast } from 'sonner'
 import Button from '@/components/Button'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import formatDate from '@/utils/formatDate'
+import formatInvitationResource from '@/utils/formatInvitationResource'
 import getRolePreferredName from '@/utils/getRolePreferredName'
-import type { Invitation, InvitationAction } from '@/types/invitations'
+import type { InvitationAction } from '@/types/invitations'
 import type { UserProfile } from '@/types/profile'
 import type { ReactNode } from 'react'
 
@@ -130,9 +131,9 @@ const InvitationReview = () => {
   // the Keycloak login window and then back here.
   const handleLogout = () => logout(window.location.href)
 
-  const handleRespond = (invitation: Invitation, action: InvitationAction) => {
+  const handleRespond = (invitationId: string, action: InvitationAction) => {
     respondMutation.mutate(
-      { invitation, action },
+      { invitationId, action },
       {
         onSuccess: () => {
           toast.success(`Invitation ${actionText[action].past} successfully!`)
@@ -191,6 +192,7 @@ const InvitationReview = () => {
   }
 
   const roleName = getRolePreferredName(roles, invitation.role)
+  const resourceName = formatInvitationResource(invitation)
 
   if (invitation.status !== 'PENDING') {
     const isAccepted = invitation.status === 'ACCEPTED'
@@ -211,10 +213,10 @@ const InvitationReview = () => {
           </h1>
           <p className="mt-4 text-center text-base leading-relaxed text-muted">
             {isRevoked
-              ? 'This invitation for the prefix '
-              : `You have ${isAccepted ? 'accepted' : 'rejected'} this invitation for the prefix `}
+              ? 'This invitation for '
+              : `You have ${isAccepted ? 'accepted' : 'rejected'} this invitation for `}
             <strong className="font-semibold text-foreground">
-              {invitation.prefix_name}
+              {resourceName}
             </strong>
             {isRevoked ? ' was revoked and can no longer be accepted.' : '.'}
           </p>
@@ -274,9 +276,7 @@ const InvitationReview = () => {
 
         <div className="mb-6">
           <dl className="flex flex-col gap-2">
-            <DetailField label="Prefix name">
-              {invitation.prefix_name}
-            </DetailField>
+            <DetailField label="Resource">{resourceName}</DetailField>
             <DetailField label="Role">{roleName}</DetailField>
             <DetailField label="Email">{invitation.email}</DetailField>
             <DetailField label="Invited on">
@@ -291,8 +291,8 @@ const InvitationReview = () => {
           <div className="mt-4 rounded-lg border border-brand-muted bg-brand-subtle p-4 text-sm leading-relaxed text-brand-strong">
             <p>
               By accepting this invitation, you will get the{' '}
-              <strong>{roleName}</strong> role on the{' '}
-              <strong>{invitation.prefix_name}</strong> prefix.
+              <strong>{roleName}</strong> role on{' '}
+              <strong>{resourceName}</strong>.
             </p>
             {roleDescription && <p className="mt-2">{roleDescription}</p>}
           </div>
@@ -303,7 +303,7 @@ const InvitationReview = () => {
             variant="secondary"
             size="md"
             className="w-full sm:w-auto"
-            onClick={() => handleRespond(invitation, 'REJECT')}
+            onClick={() => handleRespond(invitation.id, 'REJECT')}
             disabled={isResponding}
           >
             {respondingAction === 'REJECT' ? (
@@ -322,7 +322,7 @@ const InvitationReview = () => {
             variant="primary"
             size="md"
             className="w-full sm:w-auto"
-            onClick={() => handleRespond(invitation, 'ACCEPT')}
+            onClick={() => handleRespond(invitation.id, 'ACCEPT')}
             disabled={isResponding}
           >
             {respondingAction === 'ACCEPT' ? (

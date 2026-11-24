@@ -1,20 +1,21 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '@/auth/useAuth'
-import { PREFIX_RESOURCE } from '@/auth/roles'
 import {
-  createPrefixInvitation,
-  fetchPrefixInvitation,
-  fetchPrefixInvitations,
+  createInvitation,
+  fetchInvitation,
+  fetchInvitations,
   fetchUserInvitation,
   fetchUserInvitations,
   respondToInvitation,
-  revokePrefixInvitation,
+  revokeInvitation,
 } from '@/api/invitations'
 import type {
-  CreatePrefixInvitationRequest,
+  CreateInvitationRequest,
   Invitation,
+  InvitationSortField,
   InvitationsResponse,
   RespondToInvitationVariables,
+  SortOrder,
 } from '@/types/invitations'
 
 export const useGetUserInvitations = (
@@ -64,20 +65,14 @@ export const useRespondToInvitationMutation = () => {
   const { token } = useAuth()
 
   return useMutation<Invitation, Error, RespondToInvitationVariables>({
-    mutationFn: ({ invitation, action }: RespondToInvitationVariables) => {
+    mutationFn: ({ invitationId, action }: RespondToInvitationVariables) => {
       if (!token) {
         throw new Error('No authentication token available')
       }
-      return respondToInvitation(
-        invitation.id,
-        {
-          action,
-          api_resource: PREFIX_RESOURCE,
-          resource_id: Number(invitation.prefix_id),
-          role: invitation.role,
-        },
-        token,
-      )
+      if (!invitationId) {
+        throw new Error('Invitation ID is required')
+      }
+      return respondToInvitation(invitationId, { action }, token)
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['user-invitations'] })
@@ -89,171 +84,116 @@ export const useRespondToInvitationMutation = () => {
   })
 }
 
-export const useGetPrefixInvitations = (
-  providerId: number,
-  prefixId: number,
+export const useGetInvitations = (
   page = 1,
   size = 10,
+  apiResource?: string,
+  resourceId?: string,
   search?: string,
+  sort?: InvitationSortField,
+  order?: SortOrder,
   enabled = true,
 ) => {
   const { token } = useAuth()
 
   return useQuery<InvitationsResponse, Error>({
     queryKey: [
-      'prefix-invitations',
-      providerId,
-      prefixId,
+      'invitations',
       'list',
+      apiResource,
+      resourceId,
       page,
       size,
       search,
+      sort,
+      order,
     ],
     queryFn: () => {
       if (!token) {
         throw new Error('No authentication token available')
       }
-      if (!providerId) {
-        throw new Error('Provider ID is required')
-      }
-      if (!prefixId) {
-        throw new Error('Prefix ID is required')
-      }
-      return fetchPrefixInvitations(
-        providerId,
-        prefixId,
+      return fetchInvitations(
         token,
         page,
         size,
+        apiResource,
+        resourceId,
         search,
+        sort,
+        order,
       )
     },
     retry: false,
-    enabled: enabled && !!token && !!providerId && !!prefixId,
+    enabled: enabled && !!token,
   })
 }
 
-export const useGetPrefixInvitation = (
-  providerId: number,
-  prefixId: number,
-  invitationId: string,
-  enabled = true,
-) => {
+export const useGetInvitation = (invitationId: string, enabled = true) => {
   const { token } = useAuth()
 
   return useQuery<Invitation, Error>({
-    queryKey: [
-      'prefix-invitations',
-      providerId,
-      prefixId,
-      'detail',
-      invitationId,
-    ],
+    queryKey: ['invitations', 'detail', invitationId],
     queryFn: () => {
       if (!token) {
         throw new Error('No authentication token available')
       }
-      if (!providerId) {
-        throw new Error('Provider ID is required')
-      }
-      if (!prefixId) {
-        throw new Error('Prefix ID is required')
-      }
       if (!invitationId) {
         throw new Error('Invitation ID is required')
       }
-      return fetchPrefixInvitation(providerId, prefixId, invitationId, token)
+      return fetchInvitation(invitationId, token)
     },
     retry: false,
-    enabled: enabled && !!token && !!providerId && !!prefixId && !!invitationId,
+    enabled: enabled && !!token && !!invitationId,
   })
 }
 
-export const useCreatePrefixInvitationMutation = () => {
+export const useCreateInvitationMutation = () => {
   const queryClient = useQueryClient()
   const { token } = useAuth()
 
-  return useMutation<
-    Invitation,
-    Error,
-    {
-      providerId: number
-      prefixId: number
-      data: CreatePrefixInvitationRequest
-    }
-  >({
-    mutationFn: ({
-      providerId,
-      prefixId,
-      data,
-    }: {
-      providerId: number
-      prefixId: number
-      data: CreatePrefixInvitationRequest
-    }) => {
+  return useMutation<Invitation, Error, CreateInvitationRequest>({
+    mutationFn: (data: CreateInvitationRequest) => {
       if (!token) {
         throw new Error('No authentication token available')
       }
-      if (!providerId) {
-        throw new Error('Provider ID is required')
+      if (!data.api_resource) {
+        throw new Error('API resource is required')
       }
-      if (!prefixId) {
-        throw new Error('Prefix ID is required')
+      if (!data.resource_id) {
+        throw new Error('Resource ID is required')
       }
-      return createPrefixInvitation(providerId, prefixId, data, token)
+      return createInvitation(data, token)
     },
-    onSuccess: (_, { providerId, prefixId }) => {
-      void queryClient.invalidateQueries({
-        queryKey: ['prefix-invitations', providerId, prefixId],
-      })
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['invitations'] })
       void queryClient.invalidateQueries({ queryKey: ['user-invitations'] })
     },
     onError: (error) => {
-      console.error('Prefix invitation create error:', error)
+      console.error('Invitation create error:', error)
     },
   })
 }
 
-export const useRevokePrefixInvitationMutation = () => {
+export const useRevokeInvitationMutation = () => {
   const queryClient = useQueryClient()
   const { token } = useAuth()
 
-  return useMutation<
-    Invitation,
-    Error,
-    { providerId: number; prefixId: number; invitationId: string }
-  >({
-    mutationFn: ({
-      providerId,
-      prefixId,
-      invitationId,
-    }: {
-      providerId: number
-      prefixId: number
-      invitationId: string
-    }) => {
+  return useMutation<Invitation, Error, { invitationId: string }>({
+    mutationFn: ({ invitationId }: { invitationId: string }) => {
       if (!token) {
         throw new Error('No authentication token available')
-      }
-      if (!providerId) {
-        throw new Error('Provider ID is required')
-      }
-      if (!prefixId) {
-        throw new Error('Prefix ID is required')
       }
       if (!invitationId) {
         throw new Error('Invitation ID is required')
       }
-      return revokePrefixInvitation(providerId, prefixId, invitationId, token)
+      return revokeInvitation(invitationId, token)
     },
-    onSuccess: (_, { providerId, prefixId }) => {
-      void queryClient.invalidateQueries({
-        queryKey: ['prefix-invitations', providerId, prefixId],
-      })
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['invitations'] })
       void queryClient.invalidateQueries({ queryKey: ['user-invitations'] })
     },
     onError: (error) => {
-      console.error('Prefix invitation revoke error:', error)
+      console.error('Invitation revoke error:', error)
     },
   })
 }

@@ -2,10 +2,19 @@ export type InvitationStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'REVOKED'
 
 export type InvitationAction = 'ACCEPT' | 'REJECT'
 
+export type InvitationSortField = 'createdAt' | 'email' | 'status'
+
+export type SortOrder = 'ASC' | 'DESC'
+
+export interface InvitationSort {
+  field: InvitationSortField
+  order: SortOrder
+}
+
 export interface Invitation {
   id: string
-  prefix_id: string
-  prefix_name: string
+  api_resource: string
+  resource_id: string
   email: string
   role: string
   status: InvitationStatus
@@ -20,19 +29,18 @@ export interface InvitationsResponse {
   total_pages: number
 }
 
-export interface CreatePrefixInvitationRequest {
+export interface CreateInvitationRequest {
   email: string
+  api_resource: string
+  resource_id: string
   role: string
 }
 
 export interface RespondToInvitationRequest {
   action: InvitationAction
-  api_resource: string
-  resource_id: number
-  role: string
 }
 
 export interface RespondToInvitationVariables {
-  invitation: Invitation
+  invitationId: string
   action: InvitationAction
 }

@@ -6,6 +6,7 @@ import { useGetProviders } from '@/hooks/useProviders'
 import { useGetDomains } from '@/hooks/useDomains'
 import { useGetContractTypes } from '@/hooks/useCodelist'
 import { useAuth } from '@/auth/useAuth'
+import { usePermissions } from '@/auth/usePermissions'
 import { toast } from 'sonner'
 import PageHeader from '@/components/PageHeader'
 import Button from '@/components/Button'
@@ -27,6 +28,7 @@ const Prefixes = () => {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const { isSuperAdmin, rolesReady } = useAuth()
+  const { isAllowed } = usePermissions()
 
   const [domainFilter, setDomainFilter] = useState('')
   const [contractTypeFilter, setContractTypeFilter] = useState('')
@@ -194,15 +196,17 @@ const Prefixes = () => {
         subtitle="Browse the prefixes registered in the catalogue"
         className="mb-2"
       >
-        <Button
-          variant="primary"
-          disabled={!createProvider}
-          onClick={() =>
-            void navigate(`/providers/${createProvider?.id}/prefixes/add`)
-          }
-        >
-          Create prefix
-        </Button>
+        {isAllowed('prefix.create', { providerId: createProvider?.id }) && (
+          <Button
+            variant="primary"
+            disabled={!createProvider}
+            onClick={() =>
+              void navigate(`/providers/${createProvider?.id}/prefixes/add`)
+            }
+          >
+            Create prefix
+          </Button>
+        )}
       </PageHeader>
       {isLoadingProviders || !rolesReady ? (
         <div className="loading-container">

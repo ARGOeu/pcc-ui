@@ -7,8 +7,14 @@ import {
 } from '@/hooks/useHandles'
 import { useValidateUrlMutation } from '@/hooks/useValidation'
 import { useHandleAccess } from '@/auth/useHandleAccess'
+import { usePermissions } from '@/auth/usePermissions'
 import { isTokenRejected } from '@/api/handles'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import {
+  Navigate,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom'
 import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/16/solid'
 import { toast } from 'sonner'
 import PageHeader from '@/components/PageHeader'
@@ -81,6 +87,7 @@ const CreateHandle = () => {
   const handlesPath = `/providers/${providerId}/prefixes/${prefixId}/handles`
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const { isAllowed, rolesReady } = usePermissions()
 
   const suffixFromSearch = isEditMode ? '' : (searchParams.get('suffix') ?? '')
 
@@ -220,6 +227,19 @@ const CreateHandle = () => {
         },
       )
     }
+  }
+
+  if (!rolesReady) {
+    return null
+  }
+
+  if (
+    !isAllowed(isEditMode ? 'handle.edit' : 'handle.create', {
+      providerId,
+      prefixId,
+    })
+  ) {
+    return <Navigate to={handlesPath} replace />
   }
 
   return (

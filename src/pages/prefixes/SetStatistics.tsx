@@ -4,7 +4,8 @@ import {
   useGetPrefixStatistics,
   useSetPrefixStatisticsMutation,
 } from '@/hooks/usePrefixes'
-import { useNavigate, useParams } from 'react-router-dom'
+import { usePermissions } from '@/auth/usePermissions'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import PageHeader from '@/components/PageHeader'
 import Button from '@/components/Button'
@@ -81,6 +82,7 @@ const SetStatistics = () => {
   const prefixId = Number(id)
   const prefixesPath = `/prefixes?provider=${providerId}`
   const navigate = useNavigate()
+  const { isAllowed, rolesReady } = usePermissions()
 
   const [edits, setEdits] = useState<Partial<FormData>>({})
   const [errors, setErrors] = useState<FormData>(emptyForm)
@@ -137,6 +139,14 @@ const SetStatistics = () => {
         },
       },
     )
+  }
+
+  if (!rolesReady) {
+    return null
+  }
+
+  if (!isAllowed('prefix.statistics', { providerId, prefixId })) {
+    return <Navigate to={prefixesPath} replace />
   }
 
   return (

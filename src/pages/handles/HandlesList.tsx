@@ -86,6 +86,8 @@ interface HandlesListProps {
   totalElements: number
   searchTerm: string
   handlesPath: string
+  canEdit: boolean
+  canDelete: boolean
   onDelete: (handle: string) => void
 }
 
@@ -95,6 +97,8 @@ const HandlesList = ({
   totalElements,
   searchTerm,
   handlesPath,
+  canEdit,
+  canDelete,
   onDelete,
 }: HandlesListProps) => {
   const handleCopy = (handle: string) => {
@@ -141,18 +145,22 @@ const HandlesList = ({
                     href={suffixPath}
                     className="text-muted hover:bg-surface-strong p-1!"
                   />
-                  <IconButton
-                    icon={<PencilSquareIcon className="size-4 md:size-5" />}
-                    label="Edit handle"
-                    href={`${suffixPath}/edit`}
-                    className="text-muted hover:bg-surface-strong p-1!"
-                  />
-                  <IconButton
-                    icon={<TrashIcon className="size-4 md:size-5" />}
-                    label="Delete handle"
-                    onClick={() => onDelete(handle)}
-                    className="text-red-600 hover:bg-red-50 p-1!"
-                  />
+                  {canEdit && (
+                    <IconButton
+                      icon={<PencilSquareIcon className="size-4 md:size-5" />}
+                      label="Edit handle"
+                      href={`${suffixPath}/edit`}
+                      className="text-muted hover:bg-surface-strong p-1!"
+                    />
+                  )}
+                  {canDelete && (
+                    <IconButton
+                      icon={<TrashIcon className="size-4 md:size-5" />}
+                      label="Delete handle"
+                      onClick={() => onDelete(handle)}
+                      className="text-red-600 hover:bg-red-50 p-1!"
+                    />
+                  )}
                 </div>
               </li>
             )

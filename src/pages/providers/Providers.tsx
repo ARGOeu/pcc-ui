@@ -3,6 +3,7 @@ import {
   useDeleteProviderMutation,
   useGetProviders,
 } from '@/hooks/useProviders'
+import { usePermissions } from '@/auth/usePermissions'
 import { toast } from 'sonner'
 import PageHeader from '@/components/PageHeader'
 import Button from '@/components/Button'
@@ -21,6 +22,7 @@ const Providers = () => {
 
   const { data: providers, isLoading, error } = useGetProviders()
   const deleteMutation = useDeleteProviderMutation()
+  const { isAllowed } = usePermissions()
 
   const handleDeleteClick = (provider: Provider) => {
     setProviderToDelete(provider)
@@ -77,7 +79,9 @@ const Providers = () => {
         subtitle="The providers registered in the catalogue"
         className="mb-4"
       >
-        <Button href="/providers/add">Create provider</Button>
+        {isAllowed('provider.create') && (
+          <Button href="/providers/add">Create provider</Button>
+        )}
       </PageHeader>
 
       {isLoading ? (

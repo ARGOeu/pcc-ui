@@ -1,4 +1,9 @@
-import { PencilSquareIcon, TrashIcon } from '@heroicons/react/16/solid'
+import {
+  PencilSquareIcon,
+  TrashIcon,
+  UserPlusIcon,
+} from '@heroicons/react/16/solid'
+import { usePermissions } from '@/auth/usePermissions'
 import Badge from '@/components/Badge'
 import Card from '@/components/Card'
 import IconButton from '@/components/IconButton'
@@ -13,6 +18,7 @@ interface ProviderItemProps {
 
 const ProviderItem = ({ provider, onDelete }: ProviderItemProps) => {
   const { contacts } = provider
+  const { isAllowed } = usePermissions()
 
   return (
     <li>
@@ -64,18 +70,30 @@ const ProviderItem = ({ provider, onDelete }: ProviderItemProps) => {
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-1">
-            <IconButton
-              icon={<PencilSquareIcon className="size-4" />}
-              label="Edit provider"
-              href={`/providers/${provider.id}/edit`}
-              className="tooltip-left text-muted hover:bg-surface-strong p-1!"
-            />
-            <IconButton
-              icon={<TrashIcon className="size-4" />}
-              label="Delete provider"
-              onClick={() => onDelete(provider)}
-              className="tooltip-left text-red-600 hover:bg-red-50 p-1!"
-            />
+            {isAllowed('provider.invite', { providerId: provider.id }) && (
+              <IconButton
+                icon={<UserPlusIcon className="size-4" />}
+                label="Invite user"
+                href={`/providers/${provider.id}/invite`}
+                className="tooltip-left text-muted hover:bg-surface-strong p-1!"
+              />
+            )}
+            {isAllowed('provider.edit', { providerId: provider.id }) && (
+              <IconButton
+                icon={<PencilSquareIcon className="size-4" />}
+                label="Edit provider"
+                href={`/providers/${provider.id}/edit`}
+                className="tooltip-left text-muted hover:bg-surface-strong p-1!"
+              />
+            )}
+            {isAllowed('provider.delete') && (
+              <IconButton
+                icon={<TrashIcon className="size-4" />}
+                label="Delete provider"
+                onClick={() => onDelete(provider)}
+                className="tooltip-left text-red-600 hover:bg-red-50 p-1!"
+              />
+            )}
           </div>
         </div>
       </Card>

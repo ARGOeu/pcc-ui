@@ -19,6 +19,8 @@ export const AuthContext = createContext<AuthContextType>({
   roles: [],
   isSuperAdmin: false,
   isProviderAdmin: false,
+  isPrefixAdmin: false,
+  isPrefixMember: false,
   token: undefined,
   login: () => {
     console.warn('AuthContext: login() called outside of AuthProvider')

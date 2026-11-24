@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useGetPrefix } from '@/hooks/usePrefixes'
 import { useDeleteAccountMutation, useGetAccounts } from '@/hooks/useAccounts'
-import { useParams } from 'react-router-dom'
+import { usePermissions } from '@/auth/usePermissions'
+import { Navigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import PageHeader from '@/components/PageHeader'
 import Button from '@/components/Button'
@@ -23,6 +24,7 @@ const Accounts = () => {
   const providerId = Number(providerIdParam)
   const prefixId = Number(id)
   const accountsPath = `/providers/${providerId}/prefixes/${prefixId}/accounts`
+  const { isAllowed, rolesReady } = usePermissions()
 
   const [searchInput, setSearchInput] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
@@ -88,6 +90,19 @@ const Accounts = () => {
           toast.error(`Failed to delete account: ${err.message}`)
         },
       },
+    )
+  }
+
+  if (!rolesReady) {
+    return null
+  }
+
+  if (!isAllowed('account.manage', { providerId, prefixId })) {
+    return (
+      <Navigate
+        to={`/providers/${providerId}/prefixes/${prefixId}/details`}
+        replace
+      />
     )
   }
 

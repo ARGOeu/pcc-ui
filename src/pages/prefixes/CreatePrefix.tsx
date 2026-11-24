@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import {
   useCreatePrefixMutation,
   useGetPrefix,
@@ -11,6 +11,7 @@ import {
   useGetContractTypes,
   useGetLookupServiceTypes,
 } from '@/hooks/useCodelist'
+import { usePermissions } from '@/auth/usePermissions'
 import { toast } from 'sonner'
 import PageHeader from '@/components/PageHeader'
 import Button from '@/components/Button'
@@ -67,6 +68,7 @@ const CreatePrefix = () => {
   const routeProviderId = Number(providerIdParam)
   const isEditMode = Boolean(prefixIdParam)
   const prefixId = prefixIdParam ? Number(prefixIdParam) : undefined
+  const { isAllowed, rolesReady } = usePermissions()
 
   const {
     data: providers,
@@ -240,6 +242,18 @@ const CreatePrefix = () => {
   }
 
   const isSaving = createMutation.isPending || patchMutation.isPending
+
+  if (!rolesReady) {
+    return null
+  }
+
+  if (
+    !(isEditMode
+      ? isAllowed('prefix.edit', { providerId: routeProviderId, prefixId })
+      : isAllowed('prefix.create', { providerId: routeProviderId }))
+  ) {
+    return <Navigate to="/prefixes" replace />
+  }
 
   return (
     <div className="page-container mb-4">

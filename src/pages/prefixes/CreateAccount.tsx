@@ -5,7 +5,8 @@ import {
   useGetAccount,
   useUpdateAccountMutation,
 } from '@/hooks/useAccounts'
-import { useNavigate, useParams } from 'react-router-dom'
+import { usePermissions } from '@/auth/usePermissions'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import PageHeader from '@/components/PageHeader'
 import Button from '@/components/Button'
@@ -59,6 +60,7 @@ const CreateAccount = () => {
   const isEditMode = Boolean(accountId)
   const accountsPath = `/providers/${providerId}/prefixes/${prefixId}/accounts`
   const navigate = useNavigate()
+  const { isAllowed, rolesReady } = usePermissions()
 
   const [formData, setFormData] = useState<FormData>(emptyForm)
   const [errors, setErrors] = useState<FormData>(emptyForm)
@@ -134,6 +136,19 @@ const CreateAccount = () => {
         },
       )
     }
+  }
+
+  if (!rolesReady) {
+    return null
+  }
+
+  if (!isAllowed('account.manage', { providerId, prefixId })) {
+    return (
+      <Navigate
+        to={`/providers/${providerId}/prefixes/${prefixId}/details`}
+        replace
+      />
+    )
   }
 
   return (

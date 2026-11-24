@@ -33,8 +33,8 @@ export const ENDPOINT_CATEGORIES: EndpointCategory[] = [
   {
     label: 'Invitation',
     match: (p) =>
-      isPrefixResource(p, 'invitations') ||
-      startsWithSegment(p, '/users/invitation'),
+      startsWithSegment(p, '/invitations') ||
+      startsWithSegment(p, '/users/invitations'),
   },
   {
     label: 'Prefix Account',

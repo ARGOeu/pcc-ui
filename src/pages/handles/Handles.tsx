@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useGetPrefix } from '@/hooks/usePrefixes'
 import { useDeleteHandleMutation, useGetHandles } from '@/hooks/useHandles'
 import { useHandleAccess } from '@/auth/useHandleAccess'
+import { usePermissions } from '@/auth/usePermissions'
 import { isTokenRejected } from '@/api/handles'
 import { useParams } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -39,6 +40,7 @@ const HandlesView = ({ providerId, prefixId }: HandlesViewProps) => {
   const handlesPath = `/providers/${providerId}/prefixes/${prefixId}/handles`
 
   const { access, setAccess, clearAccess } = useHandleAccess(prefixId)
+  const { isAllowed } = usePermissions()
   const { data: prefix, error: prefixError } = useGetPrefix(
     providerId,
     prefixId,
@@ -151,11 +153,13 @@ const HandlesView = ({ providerId, prefixId }: HandlesViewProps) => {
       >
         {hasPrefixSelected &&
           (access ? (
-            <Button
-              href={`/providers/${providerId}/prefixes/${prefixId}/create-handle`}
-            >
-              Create handle
-            </Button>
+            isAllowed('handle.create', { providerId, prefixId }) && (
+              <Button
+                href={`/providers/${providerId}/prefixes/${prefixId}/create-handle`}
+              >
+                Create handle
+              </Button>
+            )
           ) : (
             <Button
               variant="outline-primary"
@@ -249,6 +253,11 @@ const HandlesView = ({ providerId, prefixId }: HandlesViewProps) => {
                   totalElements={totalElements}
                   searchTerm={searchQuery}
                   handlesPath={handlesPath}
+                  canEdit={isAllowed('handle.edit', { providerId, prefixId })}
+                  canDelete={isAllowed('handle.delete', {
+                    providerId,
+                    prefixId,
+                  })}
                   onDelete={handleDelete}
                 />
                 <Pagination
