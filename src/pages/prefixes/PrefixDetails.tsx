@@ -8,20 +8,9 @@ import StatCard from '@/components/StatCard'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import ErrorDisplay from '@/components/ErrorDisplay'
 import capitalizeWord from '@/utils/capitalizeWord'
-
-interface DetailFieldProps {
-  label: string
-  value?: string
-}
-
-const DetailField = ({ label, value }: DetailFieldProps) => (
-  <div className="flex justify-between gap-4 py-2 border-b border-line last:border-b-0">
-    <span className="text-sm text-muted">{label}</span>
-    <span className="text-sm text-foreground font-medium text-right">
-      {value ?? '—'}
-    </span>
-  </div>
-)
+import DetailField from './DetailField'
+import EpicCard from './EpicCard'
+import EpicHealthcheckBadge from './EpicHealthcheckBadge'
 
 const PrefixDetails = () => {
   const { providerId: providerIdParam, id } = useParams<{
@@ -53,7 +42,14 @@ const PrefixDetails = () => {
             'Prefix details'
           )
         }
-        subtitle={prefix && `Registered by ${prefix.provider_name}`}
+        subtitle={
+          prefix && (
+            <span className="inline-flex items-center gap-2">
+              Registered by {prefix.provider_name}
+              <EpicHealthcheckBadge value={prefix.epic_healthcheck} />
+            </span>
+          )
+        }
         navigateTo={{
           label: 'Back to prefixes',
           to: `/prefixes?provider=${providerId}`,
@@ -117,26 +113,36 @@ const PrefixDetails = () => {
           )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-12 xl:gap-x-24 2xl:gap-x-32 gap-y-6">
-            <Card className="lg:col-span-2 p-4 border-l-4 border-l-brand">
-              <h2 className="section-title mb-2">Ownership & contact</h2>
-              <DetailField label="Owner" value={prefix.owner} />
-              <DetailField label="Contact name" value={prefix.contact_name} />
-              <DetailField label="Contact email" value={prefix.contact_email} />
-              <DetailField label="Used by" value={prefix.used_by} />
+            <div className="flex flex-col gap-6 lg:col-span-2">
+              <Card className="p-4 border-l-4 border-l-brand">
+                <h2 className="section-title mb-2">Ownership & contact</h2>
+                <DetailField label="Owner" value={prefix.owner} />
+                <DetailField label="Contact name" value={prefix.contact_name} />
+                <DetailField
+                  label="Contact email"
+                  value={prefix.contact_email}
+                />
+                <DetailField label="Used by" value={prefix.used_by} />
 
-              <h2 className="section-title mt-6 mb-2">Contract</h2>
-              <DetailField
-                label="Contract type"
-                value={
-                  prefix.contract_type_name &&
-                  capitalizeWord(prefix.contract_type_name)
-                }
-              />
-              <DetailField
-                label="Contract end"
-                value={prefix.contract_end?.split('T')[0]}
-              />
-            </Card>
+                <h2 className="section-title mt-6 mb-2">Contract</h2>
+                <DetailField
+                  label="Contract type"
+                  value={
+                    prefix.contract_type_name &&
+                    capitalizeWord(prefix.contract_type_name)
+                  }
+                />
+                <DetailField
+                  label="Contract end"
+                  value={prefix.contract_end?.split('T')[0]}
+                />
+              </Card>
+
+              {prefix.epic_stats?.status === 'FOUND' &&
+                prefix.epic_stats.stats !== null && (
+                  <EpicCard stats={prefix.epic_stats} />
+                )}
+            </div>
 
             <Card className="h-fit p-4 border-l-4 border-l-brand lg:sticky lg:top-4">
               <h2 className="section-title mb-2">Overview</h2>

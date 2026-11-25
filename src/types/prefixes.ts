@@ -1,3 +1,14 @@
+export type EpicStatsStatus =
+  'PENDING' | 'FOUND' | 'NOT_FOUND' | 'NO_STATS' | 'ERROR'
+
+export interface EpicStats {
+  stats: number | null
+  status: EpicStatsStatus
+  handle_timestamp: string | null
+  last_checked_at: string | null
+  last_success_at: string | null
+}
+
 export interface Prefix {
   id: number
   name: string
@@ -17,6 +28,8 @@ export interface Prefix {
   provider_name?: string
   contract_type_name?: string
   lookup_service_type_name?: string
+  epic_healthcheck?: boolean | null
+  epic_stats?: EpicStats | null
 }
 
 export interface PrefixRequest {
