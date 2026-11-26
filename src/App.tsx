@@ -31,6 +31,7 @@ import MyInvitations from '@/pages/MyInvitations'
 import InvitationReview from '@/pages/InvitationReview'
 import AdminInviteUser from '@/pages/AdminInviteUser'
 import Invitations from '@/pages/invitations'
+import ManageUsers from '@/pages/manage-users'
 import InviteProviderUser from '@/pages/providers/InviteProviderUser'
 import { AuthProvider } from '@/auth/AuthProvider'
 import { HandleAccessProvider } from '@/auth/HandleAccessProvider'
@@ -147,6 +148,7 @@ const App = () => {
                 <Route path="invitations" element={<Invitations />} />
                 <Route path="my-invitations" element={<MyInvitations />} />
                 <Route path="invite-user" element={<AdminInviteUser />} />
+                <Route path="manage-users" element={<ManageUsers />} />
                 <Route path="endpoints-access" element={<EndpointsAccess />} />
                 <Route path="*" element={<NotFound />} />
               </Route>

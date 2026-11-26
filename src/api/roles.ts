@@ -1,4 +1,9 @@
-import type { CreateRoleRequest, Role, RoleAttributes } from '@/types/roles'
+import type {
+  CreateRoleRequest,
+  RevokeRoleRequest,
+  Role,
+  RoleAttributes,
+} from '@/types/roles'
 
 const BACKEND_API = import.meta.env.VITE_BACKEND_URI
 
@@ -78,5 +83,28 @@ export const updateRoleAttributes = async (
     ) as Error & { errors?: string[] }
     error.errors = errorData.errors ?? []
     throw error
+  }
+}
+
+export const revokeRole = async (
+  data: RevokeRoleRequest,
+  token: string,
+): Promise<void> => {
+  const response = await fetch(`${BACKEND_API}/api/v1/roles/revoke`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  })
+
+  if (!response.ok) {
+    const errorData = (await response.json().catch(() => ({}))) as {
+      message?: string
+    }
+    throw new Error(
+      errorData.message ?? `HTTP error! status: ${response.status}`,
+    )
   }
 }
