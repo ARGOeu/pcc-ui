@@ -1,7 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '@/auth/useAuth'
-import { createRole, fetchRoles, updateRoleAttributes } from '@/api/roles'
-import type { CreateRoleRequest, Role, RoleAttributes } from '@/types/roles'
+import {
+  createRole,
+  fetchRoles,
+  revokeRole,
+  updateRoleAttributes,
+} from '@/api/roles'
+import type {
+  CreateRoleRequest,
+  RevokeRoleRequest,
+  Role,
+  RoleAttributes,
+} from '@/types/roles'
 
 export const useGetRoles = (enabled = true) => {
   const { token } = useAuth()
@@ -58,6 +68,32 @@ export const useUpdateRoleAttributesMutation = () => {
     },
     onError: (error) => {
       console.error('Role attributes update error:', error)
+    },
+  })
+}
+
+export const useRevokeRoleMutation = () => {
+  const queryClient = useQueryClient()
+  const { token } = useAuth()
+
+  return useMutation<void, Error, RevokeRoleRequest>({
+    mutationFn: (data: RevokeRoleRequest) => {
+      if (!token) {
+        throw new Error('No authentication token available')
+      }
+      if (!data.member_id) {
+        throw new Error('Member ID is required')
+      }
+      if (!data.role) {
+        throw new Error('Role is required')
+      }
+      return revokeRole(data, token)
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['members'] })
+    },
+    onError: (error) => {
+      console.error('Role revoke error:', error)
     },
   })
 }

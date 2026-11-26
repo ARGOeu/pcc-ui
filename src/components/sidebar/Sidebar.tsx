@@ -108,6 +108,11 @@ const Sidebar = ({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) => {
                 onClick={onCloseMobileMenu}
               />
               <SidebarNavItem
+                to="/manage-users"
+                label="Manage users"
+                onClick={onCloseMobileMenu}
+              />
+              <SidebarNavItem
                 to="/endpoints-access"
                 label="Endpoints access"
                 onClick={onCloseMobileMenu}
