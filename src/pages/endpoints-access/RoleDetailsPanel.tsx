@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useGetRoles } from '@/hooks/useRoles'
 import Card from '@/components/Card'
 import Button from '@/components/Button'
 import SearchInput from '@/components/SearchInput'
@@ -6,6 +7,7 @@ import SelectDropdown from '@/components/SelectDropdown'
 import CategoryPanel from './CategoryPanel'
 import RoleForm from './RoleForm'
 import { CATEGORY_ORDER, getEndpointCategory } from './endpointCategories'
+import getRolePreferredName from '@/utils/getRolePreferredName'
 import type { Role } from '@/types/roles'
 import type { Scope, SecuredEndpoint } from '@/types/securedEndpoints'
 
@@ -38,6 +40,7 @@ const RoleDetailsPanel = ({
   onFormDone,
   onCancelForm,
 }: RoleDetailsPanelProps) => {
+  const { data: roles } = useGetRoles()
   const [search, setSearch] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(
@@ -153,7 +156,7 @@ const RoleDetailsPanel = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="section-title mb-0.5">
-              {role.attributes?.preferred_name?.[0] ?? role.name}
+              {getRolePreferredName(roles, role.name)}
             </p>
             <p className="section-description">
               Choose which endpoints this role can access
