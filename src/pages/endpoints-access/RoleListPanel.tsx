@@ -2,6 +2,7 @@ import { PencilSquareIcon } from '@heroicons/react/16/solid'
 import Card from '@/components/Card'
 import Button from '@/components/Button'
 import IconButton from '@/components/IconButton'
+import getRolePreferredName from '@/utils/getRolePreferredName'
 import type { Role } from '@/types/roles'
 
 interface RoleListPanelProps {
@@ -48,7 +49,7 @@ const RoleListPanel = ({
               <p
                 className={`text-sm truncate ${role.id === selectedRoleId ? 'text-brand font-medium' : 'text-foreground'}`}
               >
-                {role.attributes?.preferred_name?.[0] ?? role.name}
+                {getRolePreferredName(roles, role.name)}
               </p>
               {role.attributes?.description?.[0] && (
                 <p

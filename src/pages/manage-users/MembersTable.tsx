@@ -7,7 +7,8 @@ import {
 } from '@/auth/roles'
 import DataTable, { thBase, tdBase } from '@/components/DataTable'
 import formatMembershipResource from '@/utils/formatMembershipResource'
-import getRoleLabel from '@/utils/getRoleLabel'
+import getMemberUsername from '@/utils/getMemberUsername'
+import getRolePreferredName from '@/utils/getRolePreferredName'
 import MembershipChip from './MembershipChip'
 import type { Member, MembershipToRevoke } from '@/types/members'
 
@@ -65,9 +66,16 @@ const MembersTable = ({ members, onRevoke }: MembersTableProps) => {
           return (
             <tr key={member.id} className="hover:bg-surface-muted">
               <td
-                className={`${tdBase} font-medium text-foreground whitespace-nowrap`}
+                className={`${tdBase} font-medium text-foreground`}
+                title={member.username}
               >
-                {member.username}
+                {getMemberUsername(member)
+                  .split(/(?=@)/)
+                  .map((part) => (
+                    <span key={part} className="inline-block">
+                      {part}
+                    </span>
+                  ))}
               </td>
               <td className={`${tdBase} ${columnGap} whitespace-nowrap`}>
                 {member.firstName}
@@ -91,7 +99,7 @@ const MembersTable = ({ members, onRevoke }: MembersTableProps) => {
                         <MembershipChip
                           key={`${group}-${membership.name}-${membership.role}`}
                           resource={formatMembershipResource(group, membership)}
-                          role={getRoleLabel(roles, membership.role)}
+                          role={getRolePreferredName(roles, membership.role)}
                           onRevoke={
                             canRevoke ? () => onRevoke(assignment) : undefined
                           }

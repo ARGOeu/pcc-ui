@@ -8,6 +8,7 @@ import Card from '@/components/Card'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import ErrorDisplay from '@/components/ErrorDisplay'
 import SelectDropdown from '@/components/SelectDropdown'
+import getRolePreferredName from '@/utils/getRolePreferredName'
 import validateEmail from '@/utils/validateEmail'
 import type { FormEvent, ReactNode } from 'react'
 
@@ -67,7 +68,7 @@ const InviteUserForm = ({
       ? [
           {
             value: role.name,
-            label: role.attributes?.preferred_name?.[0] ?? role.name,
+            label: getRolePreferredName(roles, role.name),
           },
         ]
       : []

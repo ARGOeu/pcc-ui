@@ -259,8 +259,6 @@ const InvitationReview = () => {
   const respondingAction = respondMutation.isPending
     ? respondMutation.variables.action
     : null
-  const roleDescription = roles?.find((role) => role.name === invitation.role)
-    ?.attributes?.description?.[0]
 
   return (
     <InvitationLayout>
@@ -294,7 +292,6 @@ const InvitationReview = () => {
               <strong>{roleName}</strong> role on{' '}
               <strong>{resourceName}</strong>.
             </p>
-            {roleDescription && <p className="mt-2">{roleDescription}</p>}
           </div>
         </div>
 

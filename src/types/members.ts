@@ -3,6 +3,7 @@ import type { Membership } from '@/types/profile'
 export interface Member {
   id: string
   username: string
+  uid?: string | null
   firstName?: string | null
   lastName?: string | null
   email?: string | null

@@ -3,10 +3,12 @@ import { toast } from 'sonner'
 import { useGetRoleMetadata } from '@/hooks/useAdmin'
 import {
   useCreateRoleMutation,
+  useGetRoles,
   useUpdateRoleAttributesMutation,
 } from '@/hooks/useRoles'
 import Button from '@/components/Button'
 import LoadingSpinner from '@/components/LoadingSpinner'
+import getRolePreferredName from '@/utils/getRolePreferredName'
 import type { RoleMetadataAttribute } from '@/types/admin'
 import type { Role, RoleAttributes } from '@/types/roles'
 
@@ -36,6 +38,7 @@ const RoleForm = ({ role, onDone, onCancel }: RoleFormProps) => {
   const [nameError, setNameError] = useState('')
   const [errors, setErrors] = useState<Partial<Record<string, string>>>({})
 
+  const { data: roles } = useGetRoles()
   const { data: metadata, isLoading: isMetadataLoading } = useGetRoleMetadata()
   const createRoleMutation = useCreateRoleMutation()
   const updateAttributesMutation = useUpdateRoleAttributesMutation()
@@ -115,7 +118,9 @@ const RoleForm = ({ role, onDone, onCancel }: RoleFormProps) => {
   return (
     <div className="flex flex-col gap-3 p-4">
       <p className="section-title">
-        {isEditMode ? `Edit ${role?.name}` : 'Create role'}
+        {role
+          ? `Edit ${getRolePreferredName(roles, role.name)}`
+          : 'Create role'}
       </p>
 
       <div className="flex flex-col">

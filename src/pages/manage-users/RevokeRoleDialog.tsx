@@ -2,12 +2,14 @@ import { useGetRoles, useRevokeRoleMutation } from '@/hooks/useRoles'
 import { toast } from 'sonner'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import formatMembershipResource from '@/utils/formatMembershipResource'
-import getRoleLabel from '@/utils/getRoleLabel'
+import getMemberUsername from '@/utils/getMemberUsername'
+import getRolePreferredName from '@/utils/getRolePreferredName'
 import type { Member, MembershipToRevoke } from '@/types/members'
 import type { RevokeRoleRequest } from '@/types/roles'
 
-const getMemberName = ({ firstName, lastName, username }: Member): string =>
-  [firstName, lastName].filter(Boolean).join(' ') || username
+const getMemberName = (member: Member): string =>
+  [member.firstName, member.lastName].filter(Boolean).join(' ') ||
+  getMemberUsername(member)
 
 const buildRevokeRequest = ({
   member,
@@ -61,7 +63,9 @@ const RevokeRoleDialog = ({
         target && (
           <>
             Are you sure you want to revoke the role{' '}
-            <strong>{getRoleLabel(roles, target.membership.role)}</strong>
+            <strong>
+              {getRolePreferredName(roles, target.membership.role)}
+            </strong>
             {resource && (
               <>
                 {' '}
